@@ -1,0 +1,120 @@
+[project]
+name = "symmetries-representational-geometry"
+version = "0.1.0"
+description = "Code accompanying the paper \"Parameter symmetries determine representational geometry in overparameterized nonlinear networks\" (ICML 2026 Workshop on Weight-Space Symmetries)."
+readme = "README.md"
+license = "MIT"
+authors = [
+    { name = "Marvin Theiss", email = "marvin.theiss@uni-tuebingen.de" }
+]
+keywords = [
+    "parameter symmetries",
+    "representational geometry",
+    "identifiability",
+    "overparameterization",
+    "deep learning theory",
+]
+requires-python = ">=3.13"
+dependencies = [
+    # JAX - Linux (CUDA)
+    "nvidia-cublas>=13.0 ; sys_platform == 'linux'",
+    "jax[cuda13]>=0.10 ; sys_platform == 'linux'",
+    "jaxlib>=0.10 ; sys_platform == 'linux'",
+    # JAX - macOS Apple Silicon
+    # Use standard JAX for now, see https://github.com/jax-ml/jax/issues/26968
+    "jax>=0.10 ; sys_platform == 'darwin' and platform_machine == 'arm64'",
+    "jaxlib>=0.10 ; sys_platform == 'darwin' and platform_machine == 'arm64'",
+    # JAX - macOS Intel (pinned, no newer wheels)
+    "jax>=0.4.38 ; sys_platform == 'darwin' and platform_machine == 'x86_64'",
+    "jaxlib>=0.4.38,<0.5 ; sys_platform == 'darwin' and platform_machine == 'x86_64'",
+    # JAX - everywhere else (CPU)
+    "jax>=0.10 ; sys_platform != 'linux' and sys_platform != 'darwin'",
+    "jaxlib>=0.10 ; sys_platform != 'linux' and sys_platform != 'darwin'",
+    # Remaining dependencies
+    "cairosvg>=2.9.0",
+    "coloraide>=8.7",
+    "daltonize>=0.2.0",
+    "equinox>=0.13.8",
+    "jaxtyping>=0.2.25",
+    "marimo[recommended]>=0.19.4",
+    "matplotlib>=3.10.8",
+    "optax>=0.2.5",
+    "setuptools>=69.0.0,<75.0.0",  # pinned to <75.0.0 due to daltonize dependency issue
+    "defusedxml>=0.7.1",
+]
+
+[dependency-groups]
+dev = [
+    "ipdb>=0.13.13",
+    "prek>=0.2.25",
+    "pytest>=8.0.0",
+    "ruff>=0.14.10",
+    "ty>=0.0.16",
+]
+
+[project.urls]
+Repository = "https://github.com/mrvnthss/symmetries-representational-geometry"
+Paper = "https://openreview.net/forum?id=CT8TbdqYmn"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/symmetries"]
+
+[tool.marimo.runtime]
+pythonpath = ["notebooks", "src"]
+
+[tool.ruff]
+line-length = 80
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "COM812",  # trailing commas conflict with ruff formatter
+    "F722",  # https://docs.kidger.site/jaxtyping/faq/#flake8-or-ruff-are-throwing-an-error
+    "N803",  # uppercase arguments are fine to denote matrices etc.
+    "N806",  # same as above
+    "PLR0913",  # many argument parameters
+    "PLR0915",  # long functions
+]
+
+# Allow autofix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+unfixable = []
+
+[tool.ruff.lint.flake8-annotations]
+allow-star-arg-any = true  # allow Any for *args/**kwargs (pass-through to external APIs)
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+"notebooks/*.py" = [
+    "ANN001",  # cell function args are injected by marimo runtime
+    "ANN202",  # cell function return types are handled by marimo runtime
+    "D100",  # notebooks don't need module docstrings
+    "EXE",  # marimo notebooks don't need shebangs (run via marimo CLI)
+    "INP001",  # notebooks dir is not a package (no __init__.py needed)
+    "PLC0415",  # imports inside cell functions are required by marimo's reactive model
+    "PLR1711",  # explicit returns in cell functions are part of marimo's structure
+    "T201",  # print statements are fine in notebooks
+]
+"notebooks/figures/*.py" = [
+    "C901",  # complex figure setup is acceptable
+    "PLR0912",  # many branches are acceptable for figure conditionals
+]
+"tests/*.py" = [
+    "ANN001",  # self parameter doesn't need type annotation
+    "PLR2004",  # magic values are fine in tests
+    "S",  # security (assert, random)
+]
+
+[tool.ruff.lint.isort]
+force-single-line = true
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+docstring-code-format = true

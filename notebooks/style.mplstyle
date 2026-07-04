@@ -1,0 +1,73 @@
+## ***************************************************************************
+## * FONT                                                                    *
+## ***************************************************************************
+
+font.family: monospace
+
+font.monospace: Fira Mono, Andale Mono, .SF NS Mono
+
+## ***************************************************************************
+## * LaTeX                                                                   *
+## ***************************************************************************
+
+mathtext.fontset: cm     # Computer Modern to match NeurIPS template
+
+## ***************************************************************************
+## * AXES                                                                    *
+## ***************************************************************************
+
+axes.linewidth:     0.6   # edge line width, default: 0.8
+
+axes.spines.left:   True  # display axis spines
+axes.spines.bottom: True
+axes.spines.top:    True
+axes.spines.right:  True
+
+## ***************************************************************************
+## * TICKS                                                                   *
+## ***************************************************************************
+
+xtick.major.size:    3.5     # major tick size in points, default: 3.5
+xtick.minor.size:    2.0     # minor tick size in points, default: 2.0
+xtick.major.width:   0.6     # major tick width in points, default: 0.8
+xtick.minor.width:   0.45    # minor tick width in points, default: 0.6
+
+ytick.major.size:    3.5     # major tick size in points, default: 3.5
+ytick.minor.size:    2.0     # minor tick size in points, default: 2.0
+ytick.major.width:   0.6     # major tick width in points, default: 0.8
+ytick.minor.width:   0.45    # minor tick width in points, default: 0.6
+
+## ***************************************************************************
+## * GRIDS                                                                   *
+## ***************************************************************************
+
+grid.color: "#b0b0b0"     # grid color
+grid.linestyle: -         # solid
+
+## ***************************************************************************
+## * LEGEND                                                                  *
+## ***************************************************************************
+
+## ***************************************************************************
+## * FIGURE                                                                  *
+## ***************************************************************************
+
+figure.dpi:         100       # figure dots per inch
+
+figure.constrained_layout.use: True   # When True, automatically make plot
+                                      # elements fit on the figure.
+
+# Padding (in inches) around axes; defaults to 3/72 inches, i.e. 3 points.
+figure.constrained_layout.h_pad:  0.04167
+figure.constrained_layout.w_pad:  0.04167
+figure.constrained_layout.hspace: 0.06     # default: 0.02
+figure.constrained_layout.wspace: 0.06     # default: 0.02
+
+## ***************************************************************************
+## * SAVING FIGURES                                                          *
+## ***************************************************************************
+
+savefig.dpi:        300       # figure dots per inch or 'figure'
+savefig.pad_inches: 0.1       # padding to be used, when bbox is set to 'tight'
+
+pdf.fonttype:       42  # Output Type 3 (Type3) or Type 42 (TrueType)
