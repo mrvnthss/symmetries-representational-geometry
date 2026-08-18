@@ -57,7 +57,9 @@ src/symmetries/       # core library (import symmetries)
   rsa.py              # representational similarity analysis
   distances.py        # distance / similarity measures
   clustering.py       # hierarchical clustering of solutions
+  neuron_types.py     # neuron-level symmetry detection
   xor.py              # XOR task + analytical solutions
+  parity.py           # parity task in arbitrary input dimension
   plotting.py         # 2D network visualization
   svg.py, colors.py   # figure-generation helpers
 notebooks/            # marimo notebooks (figures, experiments, utils)
