@@ -6,6 +6,7 @@ representational geometry in overparameterized nonlinear networks".
 
 __all__ = [
     "activations",
+    "clustering",
     "colors",
     "distances",
     "geometry2d",
@@ -20,6 +21,7 @@ __all__ = [
 __version__ = "0.1.0"
 
 from symmetries import activations
+from symmetries import clustering
 from symmetries import colors
 from symmetries import distances
 from symmetries import geometry2d
