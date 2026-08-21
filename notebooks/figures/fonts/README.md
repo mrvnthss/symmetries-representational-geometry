@@ -19,3 +19,10 @@ depending on fonts installed on the host system.
 - Version: 7.051
 - Upstream: <https://github.com/alerque/libertinus>
 - License: SIL Open Font License 1.1; see `libertinus/OFL.txt`
+
+## TeX Gyre Termes
+
+- File: `tex-gyre/TeXGyreTermes-Regular.otf`
+- Version: 2.004
+- Upstream: <https://www.gust.org.pl/projects/e-foundry/tex-gyre/termes>
+- License: GUST Font License; see `tex-gyre/GUST-FONT-LICENSE.txt`
