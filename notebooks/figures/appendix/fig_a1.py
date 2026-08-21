@@ -30,6 +30,7 @@ with app.setup:
         _FONT_DIR / "libertinus" / "LibertinusSerif-Regular.otf",
         _FONT_DIR / "libertinus" / "LibertinusSerif-Italic.otf",
         _FONT_DIR / "libertinus" / "LibertinusSerif-Bold.otf",
+        _FONT_DIR / "tex-gyre" / "TeXGyreTermes-Regular.otf",
     )
     for _font_path in _FONT_PATHS:
         font_manager.fontManager.addfont(_font_path)
@@ -47,12 +48,14 @@ with app.setup:
 
     FIGURE_FONT_CONFIGS = {
         "submission": {
-            "font.family": "monospace",
+            "font.family": "serif",
+            "font.serif": ["TeX Gyre Termes"],
             "font.monospace": ["Fira Mono"],
             "mathtext.fontset": "cm",
         },
         "preprint": {
-            "font.family": "monospace",
+            "font.family": "serif",
+            "font.serif": ["Libertinus Serif"],
             "font.monospace": ["Libertinus Mono"],
             "mathtext.fontset": "custom",
             "mathtext.rm": "Libertinus Serif",
@@ -153,7 +156,7 @@ def plot_activation_components(
         zorder=z_odd,
     )
     name = spec if isinstance(spec, str) else spec[0]
-    ax.set_title(name)
+    ax.set_title(name, fontfamily="monospace")
 
     return line_y, line_y_even, line_y_odd
 
