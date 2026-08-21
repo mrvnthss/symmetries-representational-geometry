@@ -14,11 +14,25 @@ with app.setup:
     import matplotlib.lines as mpl_lines
     import matplotlib.pyplot as plt
     from jaxtyping import Array
+    from matplotlib import font_manager
 
     from symmetries import activations
     from symmetries import colors
 
     logging.getLogger("fontTools").setLevel(logging.ERROR)
+
+    # Register the bundled fonts for this process. This keeps figure rendering
+    # independent of fonts installed on the host system.
+    _FONT_DIR = Path(__file__).resolve().parents[1] / "fonts"
+    _FONT_PATHS = (
+        _FONT_DIR / "fira" / "FiraMono-Regular.otf",
+        _FONT_DIR / "libertinus" / "LibertinusMono-Regular.otf",
+        _FONT_DIR / "libertinus" / "LibertinusSerif-Regular.otf",
+        _FONT_DIR / "libertinus" / "LibertinusSerif-Italic.otf",
+        _FONT_DIR / "libertinus" / "LibertinusSerif-Bold.otf",
+    )
+    for _font_path in _FONT_PATHS:
+        font_manager.fontManager.addfont(_font_path)
 
     # Plotting defaults
     plt.style.use("./style.mplstyle")
@@ -28,8 +42,35 @@ with app.setup:
     orange_colors = [cmap(t) for t in [0.9, 0.6, 0.4]]
     plt.rcParams["axes.prop_cycle"] = cycler.cycler(color=orange_colors)
 
-    OUTPUT_PATH = Path("../figures/appendix/fig_a1.pdf")
-    OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
+    OUTPUT_DIR = Path("../figures/appendix")
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+
+    FIGURE_FONT_CONFIGS = {
+        "submission": {
+            "font.family": "monospace",
+            "font.monospace": ["Fira Mono"],
+            "mathtext.fontset": "cm",
+        },
+        "preprint": {
+            "font.family": "monospace",
+            "font.monospace": ["Libertinus Mono"],
+            "mathtext.fontset": "custom",
+            "mathtext.rm": "Libertinus Serif",
+            "mathtext.it": "Libertinus Serif:italic",
+            "mathtext.bf": "Libertinus Serif:bold",
+        },
+    }
+
+    FIGURE_LEGEND_LABELS = {
+        "submission": (r"$f(x)$", r"$e(x)$", r"$o(x)$"),
+        # MathText does not apply italic correction between custom italic and
+        # roman fonts. Add the corrections needed by the Libertinus glyphs.
+        "preprint": (
+            r"$f\hspace{0.25}(x\hspace{0.12})$",
+            r"$e\hspace{0.10}(x\hspace{0.12})$",
+            r"$o\hspace{0.10}(x\hspace{0.12})$",
+        ),
+    }
 
     # Even-linear activation functions
     ACTIVATIONS = [
@@ -84,6 +125,7 @@ def plot_activation_components(
     spec: activations.ActivationSpec,
     xs: Array,
     z_orders: tuple[int, int, int],
+    legend_labels: tuple[str, str, str],
 ) -> tuple[mpl_lines.Line2D, mpl_lines.Line2D, mpl_lines.Line2D]:
     """Plot an activation function and its even and odd components."""
     z_fn, z_even, z_odd = z_orders
@@ -92,21 +134,21 @@ def plot_activation_components(
     (line_y,) = ax.plot(
         xs,
         ys,
-        label=r"$f(x)$",
+        label=legend_labels[0],
         lw=2,  # default: 1.5
         zorder=z_fn,
     )
     (line_y_even,) = ax.plot(
         xs,
         ys_even,
-        label=r"$e(x)$",
+        label=legend_labels[1],
         ls="--",
         zorder=z_even,
     )
     (line_y_odd,) = ax.plot(
         xs,
         ys_odd,
-        label=r"$o(x)$",
+        label=legend_labels[2],
         ls=":",
         zorder=z_odd,
     )
@@ -127,6 +169,7 @@ def plot_activation_components_grid(
     x_to_y_ratio: float,
     n_points: int,
     z_orders: tuple[int, int, int],
+    legend_labels: tuple[str, str, str],
     output_path: Path | None = None,
     show: bool = False,
 ) -> plt.Figure:
@@ -156,6 +199,7 @@ def plot_activation_components_grid(
             spec=spec,
             xs=xs,
             z_orders=z_orders,
+            legend_labels=legend_labels,
         )
         ax.set_aspect("equal")
 
@@ -190,10 +234,47 @@ def plot_activation_components_grid(
     return fig
 
 
+@app.function
+def export_activation_components_grid_variants(
+    activation_specs: Sequence[activations.ActivationSpec],
+    *,
+    output_dir: Path,
+    output_stem: str,
+    fig_size: tuple[float, float],
+    n_rows: int,
+    n_cols: int,
+    y_range: float,
+    x_to_y_ratio: float,
+    n_points: int,
+    z_orders: tuple[int, int, int],
+) -> None:
+    """Export submission and preprint variants with matched fonts."""
+    for variant, font_config in FIGURE_FONT_CONFIGS.items():
+        variant_output_dir = output_dir / variant
+        variant_output_dir.mkdir(parents=True, exist_ok=True)
+        output_path = variant_output_dir / f"{output_stem}.pdf"
+        with plt.rc_context(font_config):
+            fig = plot_activation_components_grid(
+                activation_specs,
+                fig_size=fig_size,
+                n_rows=n_rows,
+                n_cols=n_cols,
+                y_range=y_range,
+                x_to_y_ratio=x_to_y_ratio,
+                n_points=n_points,
+                z_orders=z_orders,
+                legend_labels=FIGURE_LEGEND_LABELS[variant],
+                output_path=output_path,
+            )
+        plt.close(fig)
+
+
 @app.cell
 def _():
-    plot_activation_components_grid(
+    export_activation_components_grid_variants(
         ACTIVATIONS,
+        output_dir=OUTPUT_DIR,
+        output_stem="fig-a1",
         fig_size=(8.0, 6.4),
         n_rows=3,
         n_cols=3,
@@ -201,7 +282,6 @@ def _():
         x_to_y_ratio=1.4,
         n_points=1001,
         z_orders=(3, 1, 2),
-        output_path=OUTPUT_PATH,
     )
     return
 

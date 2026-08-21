@@ -9,7 +9,7 @@ with app.setup:
 
     import cycler
     import matplotlib.pyplot as plt
-    from fig_a1 import plot_activation_components_grid
+    from fig_a1 import export_activation_components_grid_variants
 
     from symmetries import colors
 
@@ -23,8 +23,8 @@ with app.setup:
     orange_colors = [cmap(t) for t in [0.9, 0.6, 0.4]]
     plt.rcParams["axes.prop_cycle"] = cycler.cycler(color=orange_colors)
 
-    OUTPUT_PATH = Path("../figures/appendix/fig_a3.pdf")
-    OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
+    OUTPUT_DIR = Path("../figures/appendix")
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
     # Other activation functions (not even-linear or constant-odd)
     ACTIVATIONS = [
@@ -39,8 +39,10 @@ with app.setup:
 
 @app.cell
 def _():
-    plot_activation_components_grid(
+    export_activation_components_grid_variants(
         ACTIVATIONS,
+        output_dir=OUTPUT_DIR,
+        output_stem="fig-a3",
         fig_size=(8.0, 4.2),
         n_rows=2,
         n_cols=3,
@@ -48,7 +50,6 @@ def _():
         x_to_y_ratio=1.4,
         n_points=1001,
         z_orders=(2, 1, 3),
-        output_path=OUTPUT_PATH,
     )
     return
 
