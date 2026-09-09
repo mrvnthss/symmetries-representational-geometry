@@ -1,0 +1,45 @@
+## ***************************************************************************
+## * APPENDIX FIGURES                                                         *
+## ***************************************************************************
+##
+## Layered on top of style.mplstyle:
+##
+##   plt.style.use(["./style.mplstyle", "./appendix.mplstyle"])
+##
+## These figures show shapes rather than values, so the panels carry no
+## frame, grid or ticks. Panels that need the origin mark it with a faint
+## cross (`draw_origin` in figures/appendix/common.py).
+
+## ***************************************************************************
+## * AXES                                                                     *
+## ***************************************************************************
+
+axes.spines.left:   False
+axes.spines.bottom: False
+axes.spines.top:    False
+axes.spines.right:  False
+
+axes.grid: False
+
+## ***************************************************************************
+## * TICKS                                                                    *
+## ***************************************************************************
+
+xtick.bottom:      False
+xtick.labelbottom: False
+ytick.left:        False
+ytick.labelleft:   False
+
+## ***************************************************************************
+## * LEGEND                                                                   *
+## ***************************************************************************
+
+legend.frameon: False
+
+## ***************************************************************************
+## * FIGURE                                                                   *
+## ***************************************************************************
+
+# Without a frame the panels need more air to stay visually separate.
+figure.constrained_layout.wspace: 0.10
+figure.constrained_layout.hspace: 0.10

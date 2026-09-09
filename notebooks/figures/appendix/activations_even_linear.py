@@ -8,61 +8,31 @@ with app.setup:
     from collections.abc import Sequence
     from pathlib import Path
 
-    import cycler
     import jax.numpy as jnp
     import matplotlib.axes as mpl_axes
-    import matplotlib.lines as mpl_lines
     import matplotlib.pyplot as plt
+    from figures.appendix.common import CURVE_COLOR
+    from figures.appendix.common import DISPLAY_NAMES
+    from figures.appendix.common import component_color
+    from figures.appendix.common import draw_origin
+    from figures.fonts.config import FIGURE_FONT_CONFIGS
+    from figures.fonts.config import register_bundled_fonts
     from jaxtyping import Array
-    from matplotlib import font_manager
 
     from symmetries import activations
-    from symmetries import colors
 
     logging.getLogger("fontTools").setLevel(logging.ERROR)
 
-    # Register the bundled fonts for this process. This keeps figure rendering
-    # independent of fonts installed on the host system.
-    _FONT_DIR = Path(__file__).resolve().parents[1] / "fonts"
-    _FONT_PATHS = (
-        _FONT_DIR / "fira" / "FiraMono-Regular.otf",
-        _FONT_DIR / "libertinus" / "LibertinusMono-Regular.otf",
-        _FONT_DIR / "libertinus" / "LibertinusSerif-Regular.otf",
-        _FONT_DIR / "libertinus" / "LibertinusSerif-Italic.otf",
-        _FONT_DIR / "libertinus" / "LibertinusSerif-Bold.otf",
-        _FONT_DIR / "tex-gyre" / "TeXGyreTermes-Regular.otf",
-    )
-    for _font_path in _FONT_PATHS:
-        font_manager.fontManager.addfont(_font_path)
+    register_bundled_fonts()
 
     # Plotting defaults
-    plt.style.use("./style.mplstyle")
+    plt.style.use(["./style.mplstyle", "./appendix.mplstyle"])
 
-    # Sample orange sequential colormap at discrete values
-    cmap = colors.get_sequential_cmap("orange")
-    orange_colors = [cmap(t) for t in [0.9, 0.6, 0.4]]
-    plt.rcParams["axes.prop_cycle"] = cycler.cycler(color=orange_colors)
+    # Both components of a panel share one color beside its black curve
+    COMPONENT_COLOR = component_color("orange")
 
     OUTPUT_DIR = Path("../figures/appendix")
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-
-    FIGURE_FONT_CONFIGS = {
-        "submission": {
-            "font.family": "serif",
-            "font.serif": ["TeX Gyre Termes"],
-            "font.monospace": ["Fira Mono"],
-            "mathtext.fontset": "cm",
-        },
-        "preprint": {
-            "font.family": "serif",
-            "font.serif": ["Libertinus Serif"],
-            "font.monospace": ["Libertinus Mono"],
-            "mathtext.fontset": "custom",
-            "mathtext.rm": "Libertinus Serif",
-            "mathtext.it": "Libertinus Serif:italic",
-            "mathtext.bf": "Libertinus Serif:bold",
-        },
-    }
 
     FIGURE_LEGEND_LABELS = {
         "submission": (r"$f(x)$", r"$e(x)$", r"$o(x)$"),
@@ -90,25 +60,6 @@ with app.setup:
 
 
 @app.function
-def setup_grid(ax: mpl_axes.Axes) -> None:
-    """Apply custom grid settings to an axis."""
-    ax.grid(
-        visible=True,
-        which="major",
-        linewidth=0.60,  # matches tick width
-        alpha=0.6,
-    )
-    ax.grid(
-        visible=True,
-        which="minor",
-        linewidth=0.45,  # matches tick width
-        alpha=0.3,
-    )
-    ax.minorticks_on()
-    ax.set_axisbelow(True)
-
-
-@app.function
 def compute_components(
     spec: activations.ActivationSpec,
     xs: Array,
@@ -129,36 +80,37 @@ def plot_activation_components(
     xs: Array,
     z_orders: tuple[int, int, int],
     legend_labels: tuple[str, str, str],
-) -> tuple[mpl_lines.Line2D, mpl_lines.Line2D, mpl_lines.Line2D]:
+) -> None:
     """Plot an activation function and its even and odd components."""
     z_fn, z_even, z_odd = z_orders
     ys, ys_even, ys_odd = compute_components(spec, xs)
 
-    (line_y,) = ax.plot(
+    ax.plot(
         xs,
         ys,
         label=legend_labels[0],
+        color=CURVE_COLOR,
         lw=2,  # default: 1.5
         zorder=z_fn,
     )
-    (line_y_even,) = ax.plot(
+    ax.plot(
         xs,
         ys_even,
         label=legend_labels[1],
+        color=COMPONENT_COLOR,
         ls="--",
         zorder=z_even,
     )
-    (line_y_odd,) = ax.plot(
+    ax.plot(
         xs,
         ys_odd,
         label=legend_labels[2],
+        color=COMPONENT_COLOR,
         ls=":",
         zorder=z_odd,
     )
     name = spec if isinstance(spec, str) else spec[0]
-    ax.set_title(name, fontfamily="monospace")
-
-    return line_y, line_y_even, line_y_odd
+    ax.set_title(DISPLAY_NAMES[name])
 
 
 @app.function
@@ -194,9 +146,7 @@ def plot_activation_components_grid(
     xs = jnp.linspace(-(x_range + 1.0), x_range + 1.0, num=n_points)
 
     # Iterate over activation functions
-    for i, (ax, spec) in enumerate(
-        zip(axs.flat, activation_specs, strict=True)
-    ):
+    for ax, spec in zip(axs.flat, activation_specs, strict=True):
         plot_activation_components(
             ax=ax,
             spec=spec,
@@ -205,15 +155,7 @@ def plot_activation_components_grid(
             legend_labels=legend_labels,
         )
         ax.set_aspect("equal")
-
-        # Declutter to keep only outer tick labels
-        row, col = divmod(i, n_cols)
-        if row < (n_rows - 1):
-            ax.tick_params(axis="x", which="both", labelbottom=False)
-        if col > 0:
-            ax.tick_params(axis="y", which="both", labelleft=False)
-
-        setup_grid(ax)
+        draw_origin(ax)
 
     # Add global legend (use the first axis as the source of handles/labels)
     handles, labels = axs.flat[0].get_legend_handles_labels()
@@ -222,7 +164,6 @@ def plot_activation_components_grid(
         labels,
         loc="lower center",
         ncol=3,
-        frameon=False,
         bbox_to_anchor=(0.5, -0.4),
         bbox_transform=axs[n_rows - 1, n_cols // 2].transAxes,
     )
@@ -277,8 +218,8 @@ def _():
     export_activation_components_grid_variants(
         ACTIVATIONS,
         output_dir=OUTPUT_DIR,
-        output_stem="fig-a1",
-        fig_size=(8.0, 6.4),
+        output_stem="activations-even-linear",
+        fig_size=(8.0, 6.15),
         n_rows=3,
         n_cols=3,
         y_range=5.0,
