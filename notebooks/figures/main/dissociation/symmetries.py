@@ -19,7 +19,7 @@ with app.setup:
     # ── PATHS AND TEMPLATE ────────────────────────────────────────────
 
     TEMPLATE_MANUAL_PATH = Path("../figures/templates/manual/hidden_unit.svg")
-    OUTPUT_DIR = Path("../figures/main/fig1/symmetries")
+    OUTPUT_DIR = Path("../figures/main/dissociation/symmetries")
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
     TEMPLATE_SVG = TEMPLATE_MANUAL_PATH.read_text()
