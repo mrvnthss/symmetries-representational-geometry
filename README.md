@@ -36,13 +36,14 @@ or run it as a read-only app:
 uv run --directory notebooks marimo run figures/main/fig2/components.py
 ```
 
-| Notebook                                  | Output                                |
-| ----------------------------------------- | ------------------------------------- |
-| `.../main/fig1/components.py`             | Figure 1 components                   |
-| `.../main/fig1/symmetries.py`             | Figure 1 symmetry-group illustrations |
-| `.../main/fig2/components.py`             | Figure 2 components                   |
-| `.../appendix/fig_a1.py` ... `fig_a3.py`  | Appendix activation decompositions    |
-| `.../templates/hidden_unit_components.py` | Reusable hidden-unit template assets  |
+| Notebook                                  | Output                                     |
+| ----------------------------------------- | ------------------------------------------ |
+| `.../main/fig1/components.py`             | Figure 1 components                        |
+| `.../main/fig1/symmetries.py`             | Figure 1 symmetry-group illustrations      |
+| `.../main/fig2/components.py`             | Figure 2 components                        |
+| `.../appendix/activations_*.py`           | Appendix activation decompositions         |
+| `.../appendix/opposite_orientations.py`   | Oppositely oriented ReLU parameterizations |
+| `.../templates/hidden_unit_components.py` | Reusable hidden-unit template assets       |
 
 Generated assets are written into `figures/`.
 

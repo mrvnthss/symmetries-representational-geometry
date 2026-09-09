@@ -2,8 +2,9 @@
 
 These fonts are bundled so the paper figures render reproducibly without
 depending on fonts installed on the host system.
-`figures/appendix/fig_a1.py` registers them with Matplotlib at runtime via
-`matplotlib.font_manager.fontManager.addfont`.
+`config.py` registers them with Matplotlib at runtime via
+`matplotlib.font_manager.fontManager.addfont`, and holds the per-venue
+font configuration used to export each figure twice.
 
 ## Fira Mono
 
