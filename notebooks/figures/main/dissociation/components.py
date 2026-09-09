@@ -24,7 +24,7 @@ with app.setup:
 
     logging.getLogger("fontTools").setLevel(logging.ERROR)
 
-    OUTPUT_PATH = Path("../figures/main/fig1/components")
+    OUTPUT_PATH = Path("../figures/main/dissociation/components")
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
 
     # ── Plotting constants ────────────────────────────────────────────

@@ -12,13 +12,15 @@ with app.setup:
     import matplotlib.pyplot as plt
     import numpy as np
 
-    from figures.main.fig1.components import DATA_KWARGS
-    from figures.main.fig1.components import HEATMAP_KWARGS
-    from figures.main.fig1.components import HYPERPLANE_KWARGS
-    from figures.main.fig1.components import activation_kwargs_with_labels
-    from figures.main.fig1.components import make_component_axes
-    from figures.main.fig1.components import rsm_kwargs_with_labels
-    from figures.main.fig1.components import save_component
+    from figures.main.dissociation.components import DATA_KWARGS
+    from figures.main.dissociation.components import HEATMAP_KWARGS
+    from figures.main.dissociation.components import HYPERPLANE_KWARGS
+    from figures.main.dissociation.components import (
+        activation_kwargs_with_labels,
+    )
+    from figures.main.dissociation.components import make_component_axes
+    from figures.main.dissociation.components import rsm_kwargs_with_labels
+    from figures.main.dissociation.components import save_component
     from symmetries import distances
     from symmetries import geometry2d
     from symmetries import mlp
@@ -28,7 +30,7 @@ with app.setup:
 
     logging.getLogger("fontTools").setLevel(logging.ERROR)
 
-    OUTPUT_PATH = Path("../figures/main/fig2/components")
+    OUTPUT_PATH = Path("../figures/main/primitives/components")
     OUTPUT_PATH.mkdir(parents=True, exist_ok=True)
 
     # ── Numerical constants ───────────────────────────────────────────
