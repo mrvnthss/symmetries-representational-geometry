@@ -26,7 +26,7 @@ with app.setup:
     register_bundled_fonts()
 
     # Plotting defaults
-    plt.style.use(["./style.mplstyle", "./appendix.mplstyle"])
+    plt.style.use(["./style.mplstyle", "./frameless.mplstyle"])
 
     # Both components of a panel share one color beside its black curve
     COMPONENT_COLOR = component_color("orange")
