@@ -1,6 +1,6 @@
 """Shared style for the appendix figures.
 
-``appendix.mplstyle`` drops the frame, grid and ticks. Each panel then
+``frameless.mplstyle`` drops the frame, grid and ticks. Each panel then
 draws its subject in black and that subject's components in one color.
 """
 

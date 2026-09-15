@@ -1,14 +1,14 @@
 ## ***************************************************************************
-## * APPENDIX FIGURES                                                         *
+## * FRAMELESS PANELS                                                         *
 ## ***************************************************************************
 ##
 ## Layered on top of style.mplstyle:
 ##
-##   plt.style.use(["./style.mplstyle", "./appendix.mplstyle"])
+##   plt.style.use(["./style.mplstyle", "./frameless.mplstyle"])
 ##
-## These figures show shapes rather than values, so the panels carry no
-## frame, grid or ticks. Panels that need the origin mark it with a faint
-## cross (`draw_origin` in figures/appendix/common.py).
+## For panels that show shapes rather than values: they carry no frame,
+## grid or ticks. Panels that need the origin mark it with a faint cross
+## (`draw_origin` in figures/appendix/common.py).
 
 ## ***************************************************************************
 ## * AXES                                                                     *

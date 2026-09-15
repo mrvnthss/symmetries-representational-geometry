@@ -23,7 +23,7 @@ with app.setup:
     register_bundled_fonts()
 
     # Plotting defaults
-    plt.style.use(["./style.mplstyle", "./appendix.mplstyle"])
+    plt.style.use(["./style.mplstyle", "./frameless.mplstyle"])
 
     OUTPUT_DIR = Path("../figures/appendix")
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
