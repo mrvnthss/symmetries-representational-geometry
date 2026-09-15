@@ -15,8 +15,8 @@ font configuration used to export each figure twice.
 
 ## Libertinus
 
-- Files: `libertinus/LibertinusMono-Regular.otf` and the regular, italic, and
-  bold faces of Libertinus Serif
+- Files: `libertinus/LibertinusMono-Regular.otf` and the regular, italic,
+  bold, and bold-italic faces of Libertinus Serif
 - Version: 7.051
 - Upstream: <https://github.com/alerque/libertinus>
 - License: SIL Open Font License 1.1; see `libertinus/OFL.txt`

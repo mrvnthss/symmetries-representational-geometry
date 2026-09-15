@@ -46,9 +46,9 @@ with app.setup:
     PANELS = ("pos", "neg", "lin")
 
     TITLES = {
-        "pos": r"$\theta^{+}$",
-        "neg": r"$\theta^{-}$",
-        "lin": r"$\theta^{+} \to \theta^{-}$",
+        "pos": r"$\boldsymbol{\theta}^{+}$",
+        "neg": r"$\boldsymbol{\theta}^{-}$",
+        "lin": r"$\boldsymbol{\eta}$",
     }
 
     # Hue marks orientation, following the convention of Figure 1: orange
@@ -102,8 +102,8 @@ with app.setup:
     # (x, y, horizontal alignment, vertical alignment) per panel, in the
     # space each one leaves clear beside its black curve.
     ANNOTATION_POS = {
-        "pos": (-1.1, 0.6, "right", "center"),
-        "neg": (1.1, 0.6, "left", "center"),
+        "pos": (-1.1, 0.18, "right", "bottom"),
+        "neg": (1.1, 0.18, "left", "bottom"),
         "lin": (2.1, 0.18, "right", "bottom"),
     }
 

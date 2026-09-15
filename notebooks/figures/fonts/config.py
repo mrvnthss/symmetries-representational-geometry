@@ -23,6 +23,7 @@ _FONT_PATHS = (
     _FONT_DIR / "libertinus" / "LibertinusSerif-Regular.otf",
     _FONT_DIR / "libertinus" / "LibertinusSerif-Italic.otf",
     _FONT_DIR / "libertinus" / "LibertinusSerif-Bold.otf",
+    _FONT_DIR / "libertinus" / "LibertinusSerif-BoldItalic.otf",
     _FONT_DIR / "tex-gyre" / "TeXGyreTermes-Regular.otf",
 )
 
@@ -43,6 +44,7 @@ FIGURE_FONT_CONFIGS = {
         "mathtext.rm": "Libertinus Serif",
         "mathtext.it": "Libertinus Serif:italic",
         "mathtext.bf": "Libertinus Serif:bold",
+        "mathtext.bfit": "Libertinus Serif:italic:bold",
     },
 }
 
