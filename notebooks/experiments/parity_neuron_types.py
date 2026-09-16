@@ -146,7 +146,7 @@ def _(sweeps):
         "**Convergence rates** (loss below target within the step budget)",
         "",
         "| $d$ | Width | Converged |",
-        "| --- | --- | --- |",
+        "| --- | ----- | --------- |",
     ]
     _lines += [
         f"| {_n_dims} | {_n_hidden} | {np.mean(_converged) * 100:.1f} % |"
