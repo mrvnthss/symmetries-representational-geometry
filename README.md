@@ -43,6 +43,7 @@ uv run --directory notebooks marimo run figures/main/primitives/components.py
 | `.../main/primitives/components.py`       | Figure 2 components                        |
 | `.../appendix/activations_*.py`           | Appendix activation decompositions         |
 | `.../appendix/opposite_orientations.py`   | Oppositely oriented ReLU parameterizations |
+| `.../appendix/xor_solutions.py`           | The six analytical XOR ReLU solutions      |
 | `.../templates/hidden_unit_components.py` | Reusable hidden-unit template assets       |
 
 Generated assets are written into `figures/`.
