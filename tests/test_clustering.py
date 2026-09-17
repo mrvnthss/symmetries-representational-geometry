@@ -551,3 +551,127 @@ class TestPrepareMLPForClustering:
         # Should be different in generic mode
         dist = np.linalg.norm(X1 - X2)
         assert dist > 0.1  # Noticeably different
+
+
+class TestPermutationInvariantDistances:
+    """Test the quotient metric on hidden-neuron permutations."""
+
+    @staticmethod
+    def _blocks(models: list[mlp.MLP]) -> tuple[np.ndarray, np.ndarray]:
+        return clustering.mlp_feature_blocks(
+            *clustering.standardize_mlp_solutions(models),
+            quotient_hidden_rescaling=True,
+        )
+
+    def test_swapped_neurons_are_identical(self) -> None:
+        """A model and its neuron-swapped copy must be at distance zero."""
+        model = geometry2d.mlp_from_geometry(
+            angles=(0.4, 2.3),
+            distances=(0.9, -1.1),
+            gains=(1.3, 0.7),
+            output_weights=(2.0, -0.5),
+            output_bias=0.25,
+        )
+        swapped = geometry2d.mlp_from_geometry(
+            angles=(2.3, 0.4),
+            distances=(-1.1, 0.9),
+            gains=(0.7, 1.3),
+            output_weights=(-0.5, 2.0),
+            output_bias=0.25,
+        )
+
+        distances = clustering.permutation_invariant_distances(
+            *self._blocks([model, swapped])
+        )
+
+        assert distances.shape == (1,)
+        assert distances[0] < 1e-8
+
+    def test_shared_angle_survives_a_reordering(self) -> None:
+        """Equal angles leave the sort order free; the metric must not care."""
+        # Both neurons on one angle, so a sort has only later keys to go
+        # on and can order two such models either way.
+        model = geometry2d.mlp_from_geometry(
+            angles=(0.75, 0.75),
+            distances=(-1.4, 0.0),
+            output_weights=(1.0, -2.0),
+            output_bias=-0.7,
+        )
+        swapped = geometry2d.mlp_from_geometry(
+            angles=(0.75, 0.75),
+            distances=(0.0, -1.4),
+            output_weights=(-2.0, 1.0),
+            output_bias=-0.7,
+        )
+
+        distances = clustering.permutation_invariant_distances(
+            *self._blocks([model, swapped])
+        )
+
+        assert distances[0] < 1e-8
+
+    def test_agrees_with_euclidean_on_the_best_matching(self) -> None:
+        """With no reordering to gain, the metric is the plain distance."""
+        first = geometry2d.mlp_from_geometry(
+            angles=(0.2, 1.9),
+            distances=(0.5, -0.3),
+            output_weights=(1.0, 1.0),
+            output_bias=0.1,
+        )
+        second = geometry2d.mlp_from_geometry(
+            angles=(0.3, 2.0),
+            distances=(0.6, -0.2),
+            output_weights=(1.1, 0.9),
+            output_bias=0.2,
+        )
+
+        neurons, networks = self._blocks([first, second])
+        distances = clustering.permutation_invariant_distances(
+            neurons, networks
+        )
+
+        flat = np.concatenate(
+            [neurons.reshape(len(neurons), -1), networks], axis=1
+        )
+        assert distances[0] <= np.linalg.norm(flat[0] - flat[1]) + 1e-12
+
+    def test_condensed_length_and_nonnegativity(self) -> None:
+        """The result is a condensed matrix SciPy can consume."""
+        models = [
+            geometry2d.mlp_from_geometry(
+                angles=(0.1 * k, 1.0 + 0.1 * k),
+                distances=(0.2 * k, -0.1 * k),
+                output_weights=(1.0, -1.0),
+                output_bias=0.0,
+            )
+            for k in range(5)
+        ]
+
+        distances = clustering.permutation_invariant_distances(
+            *self._blocks(models)
+        )
+
+        assert distances.shape == (5 * 4 // 2,)
+        assert (distances >= 0).all()
+
+    def test_pooled_standardization_keeps_slots_comparable(self) -> None:
+        """Standardizing pools over neurons, so both slots share a scale."""
+        models = [
+            geometry2d.mlp_from_geometry(
+                angles=(0.0, 1.0),
+                distances=(float(k), -float(k)),
+                output_weights=(1.0, -1.0),
+                output_bias=0.0,
+            )
+            for k in range(1, 5)
+        ]
+
+        neurons, _ = clustering.mlp_feature_blocks(
+            *clustering.standardize_mlp_solutions(models),
+            standardize=True,
+            quotient_hidden_rescaling=True,
+        )
+
+        flat = neurons.reshape(-1, neurons.shape[-1])
+        assert np.allclose(flat.mean(axis=0), 0.0, atol=1e-6)
+        assert np.allclose(flat.std(axis=0), 1.0, atol=1e-6)

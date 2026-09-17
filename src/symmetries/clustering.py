@@ -34,6 +34,8 @@ Functions:
   linkage tree.
 * :func:`select_diverse_representatives`: Select maximally diverse
   representatives from a cluster using a greedy maxmin algorithm.
+* :func:`select_diverse_by_distance`: The same, for a precomputed
+  distance matrix.
 * :func:`plot_dendrogram`: Plot a dendrogram with optional threshold
   line.
 * :func:`extract_mlp_geometry`: Extract per-neuron geometric parameters
@@ -42,6 +44,10 @@ Functions:
   geometric coordinates with permutation-invariant neuron ordering.
 * :func:`prepare_mlp_for_clustering`: Combine canonicalized geometric
   parameters into feature vectors for clustering.
+* :func:`mlp_feature_blocks`: Split geometric parameters into per-neuron
+  and per-network features.
+* :func:`permutation_invariant_distances`: Distances that quotient out
+  the hidden-neuron permutation by optimal matching.
 * :func:`plot_cluster_representatives`: Plot representative models from
   each cluster.
 
@@ -63,9 +69,12 @@ __all__ = [
     "compute_linkage",
     "extract_mlp_geometry",
     "find_threshold_by_gap",
+    "mlp_feature_blocks",
+    "permutation_invariant_distances",
     "plot_cluster_representatives",
     "plot_dendrogram",
     "prepare_mlp_for_clustering",
+    "select_diverse_by_distance",
     "select_diverse_representatives",
     "standardize_mlp_solutions",
 ]
@@ -75,6 +84,7 @@ from typing import Any
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.cluster import hierarchy
+from scipy.optimize import linear_sum_assignment
 
 from symmetries import mlp
 from symmetries import plotting
@@ -92,7 +102,11 @@ def compute_linkage(
     for principled threshold selection.
 
     Args:
-        X: Feature matrix with shape (n_samples, n_features).
+        X: Feature matrix with shape (n_samples, n_features), or a
+          condensed distance matrix as returned by
+          :func:`permutation_invariant_distances`. For a distance matrix
+          that is not Euclidean, prefer 'average' or 'complete': 'ward'
+          is defined in terms of coordinates.
         method: Linkage method ('ward', 'complete', 'average', 'single').
 
     Returns:
@@ -228,6 +242,46 @@ def select_diverse_representatives(
         # Select point with maximum minimum distance
         next_idx = np.argmax(min_dists_masked)
         selected.append(next_idx)
+
+    return indices[np.array(selected)]
+
+
+def select_diverse_by_distance(
+    distance_matrix: np.ndarray,
+    indices: np.ndarray,
+    n_reps: int,
+) -> np.ndarray:
+    """Select maximally diverse members from a precomputed distance matrix.
+
+    The counterpart of :func:`select_diverse_representatives` for a
+    metric that has no coordinates behind it, such as the one
+    :func:`permutation_invariant_distances` returns. It starts at the
+    subset's medoid, the member with the smallest total distance to the
+    others, and then repeatedly takes the member furthest from those
+    already selected.
+
+    Args:
+        distance_matrix: Square distance matrix with shape
+          (n_samples, n_samples).
+        indices: Indices of points in the subset to select from.
+        n_reps: Number of representatives to select.
+
+    Returns:
+        Array of selected indices (subset of ``indices``).
+    """
+    if len(indices) <= n_reps:
+        return indices
+
+    subset = distance_matrix[np.ix_(indices, indices)]
+
+    selected = [int(np.argmin(subset.sum(axis=1)))]
+    min_dists = np.full(len(indices), np.inf)
+
+    for _ in range(n_reps - 1):
+        min_dists = np.minimum(min_dists, subset[selected[-1]])
+        masked = min_dists.copy()
+        masked[selected] = -np.inf
+        selected.append(int(np.argmax(masked)))
 
     return indices[np.array(selected)]
 
@@ -553,6 +607,121 @@ def prepare_mlp_for_clustering(
     return X
 
 
+def mlp_feature_blocks(
+    angles_canon: np.ndarray,
+    distances_canon: np.ndarray,
+    gains_canon: np.ndarray,
+    output_weights_canon: np.ndarray,
+    output_biases: np.ndarray,
+    *,
+    standardize: bool = False,
+    quotient_hidden_rescaling: bool = False,
+) -> tuple[np.ndarray, np.ndarray]:
+    """Split MLP parameters into per-neuron and per-network features.
+
+    The quantities :func:`prepare_mlp_for_clustering` concatenates, kept
+    in per-neuron blocks so that :func:`permutation_invariant_distances`
+    can quotient out the hidden-neuron permutation itself rather than
+    inherit whatever order its inputs arrive in.
+
+    Standardization pools over neurons as well as models, so a feature
+    dimension is scaled the same way in every neuron slot. Scaling each
+    slot separately would not survive a permutation.
+
+    Args:
+        angles_canon: Angles of hidden normal vectors, shape
+          (n_models, n_hidden). Embedded as unit-circle coordinates.
+        distances_canon: Signed distances from origin to decision
+          boundaries, shape (n_models, n_hidden).
+        gains_canon: Hidden preactivation gains, shape
+          (n_models, n_hidden). Ignored when
+          ``quotient_hidden_rescaling=True``.
+        output_weights_canon: Output layer weights, shape
+          (n_models, n_hidden).
+        output_biases: Output layer biases, shape (n_models,).
+        standardize: If True, standardize each feature dimension to zero
+          mean and unit variance.
+        quotient_hidden_rescaling: If True, replace the gain and output
+          weight by the effective output weight ``output_weight * gain``,
+          as in :func:`prepare_mlp_for_clustering`.
+
+    Returns:
+        Tuple of (neuron_features, network_features) with shapes
+        (n_models, n_hidden, n_neuron_features) and (n_models, 1).
+    """
+    parts = [np.cos(angles_canon), np.sin(angles_canon), distances_canon]
+    if quotient_hidden_rescaling:
+        parts.append(output_weights_canon * gains_canon)
+    else:
+        parts.extend([gains_canon, output_weights_canon])
+
+    neuron_features = np.stack(parts, axis=-1)
+    network_features = np.asarray(output_biases, dtype=float).reshape(-1, 1)
+
+    if standardize:
+        flat = neuron_features.reshape(-1, neuron_features.shape[-1])
+        mu = flat.mean(axis=0)
+        sd = np.maximum(flat.std(axis=0), EPS)
+        neuron_features = (neuron_features - mu) / sd
+
+        mu = network_features.mean(axis=0, keepdims=True)
+        sd = np.maximum(network_features.std(axis=0, keepdims=True), EPS)
+        network_features = (network_features - mu) / sd
+
+    return neuron_features, network_features
+
+
+def permutation_invariant_distances(
+    neuron_features: np.ndarray,
+    network_features: np.ndarray | None = None,
+) -> np.ndarray:
+    """Distances that quotient out the hidden-neuron permutation.
+
+    The distance between two models is the smallest Euclidean distance
+    over all ways of matching one model's hidden neurons to the other's,
+    found by optimal assignment. This is the metric of the quotient by
+    the permutation group, and unlike canonicalizing the order by
+    sorting it is continuous: sorting has to break ties, and two models
+    whose neurons share an angle can then be ordered differently for
+    numerical reasons alone and come out far apart.
+
+    Args:
+        neuron_features: Per-neuron features, shape
+          (n_models, n_hidden, n_neuron_features).
+        network_features: Per-model features that no permutation acts
+          on, shape (n_models, n_network_features). May be None.
+
+    Returns:
+        Condensed distance matrix of length ``n_models * (n_models - 1)
+        // 2``, as :func:`compute_linkage` and SciPy accept it.
+    """
+    n_models = len(neuron_features)
+    distances = np.zeros(n_models * (n_models - 1) // 2)
+
+    pos = 0
+    for i in range(n_models - 1):
+        # Cost of matching neuron a of model i to neuron b of model j
+        cost = (
+            (
+                neuron_features[i][None, :, None, :]
+                - neuron_features[i + 1 :, None]
+            )
+            ** 2
+        ).sum(axis=-1)
+        for offset, pair_cost in enumerate(cost):
+            rows, cols = linear_sum_assignment(pair_cost)
+            squared = pair_cost[rows, cols].sum()
+            if network_features is not None:
+                squared += (
+                    (network_features[i] - network_features[i + 1 + offset])
+                    ** 2
+                ).sum()
+            distances[pos + offset] = np.sqrt(squared)
+        pos += len(cost)
+
+    return distances
+
+
 def plot_cluster_representatives(
     models: list[mlp.MLP],
     X: np.ndarray,
@@ -560,6 +729,7 @@ def plot_cluster_representatives(
     distance_threshold: float,
     *,
     n_reps: int = 1,
+    distance_matrix: np.ndarray | None = None,
     **kwargs: Any,
 ) -> tuple[plt.Figure, np.ndarray, dict[int, np.ndarray]]:
     """Plot representative models from each cluster.
@@ -578,6 +748,10 @@ def plot_cluster_representatives(
           dendrogram.
         n_reps: Number of representatives per cluster. When > 1, selects
           maximally diverse models within each cluster.
+        distance_matrix: Square distance matrix to select representatives
+          with. When None, distances are taken from ``X``. Pass the
+          matrix whenever ``Z`` was built from one, so that selection and
+          clustering agree.
         **kwargs: Additional arguments passed to ``plotting.plot_mlp``.
 
     Returns:
@@ -609,7 +783,13 @@ def plot_cluster_representatives(
     for cluster_idx, label in enumerate(unique_labels):
         cluster_indices = np.asarray(labels == label).nonzero()[0]
         cluster_size = len(cluster_indices)
-        rep_indices = select_diverse_representatives(X, cluster_indices, n_reps)
+        rep_indices = (
+            select_diverse_representatives(X, cluster_indices, n_reps)
+            if distance_matrix is None
+            else select_diverse_by_distance(
+                distance_matrix, cluster_indices, n_reps
+            )
+        )
         representatives[int(label)] = rep_indices
 
         for rep_idx, model_idx in enumerate(rep_indices):
