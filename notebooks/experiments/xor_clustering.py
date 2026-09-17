@@ -36,9 +36,10 @@ def _():
 def _():
     N_SEEDS = 1000
     N_STEPS = int(1e7)
+    LOSS_EVERY = int(1e4)
     TARGET_LOSS = 1e-12
     SEED = 0
-    return N_SEEDS, N_STEPS, SEED, TARGET_LOSS
+    return LOSS_EVERY, N_SEEDS, N_STEPS, SEED, TARGET_LOSS
 
 
 @app.cell(hide_code=True)
@@ -50,7 +51,7 @@ def _():
 
 
 @app.cell
-def _(N_SEEDS, N_STEPS, SEED, TARGET_LOSS):
+def _(LOSS_EVERY, N_SEEDS, N_STEPS, SEED, TARGET_LOSS):
     _t0 = time.perf_counter()
     relu_trained, _relu_losses, relu_converged = training.seed_sweep(
         n_seeds=N_SEEDS,
@@ -58,6 +59,7 @@ def _(N_SEEDS, N_STEPS, SEED, TARGET_LOSS):
         activation="relu",
         n_steps=N_STEPS,
         target_loss=TARGET_LOSS,
+        loss_every=LOSS_EVERY,
         key=jax.random.PRNGKey(SEED),
     )
     jax.tree.map(
