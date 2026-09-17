@@ -105,8 +105,7 @@ def compute_linkage(
         X: Feature matrix with shape (n_samples, n_features), or a
           condensed distance matrix as returned by
           :func:`permutation_invariant_distances`. For a distance matrix
-          that is not Euclidean, prefer 'average' or 'complete': 'ward'
-          is defined in terms of coordinates.
+          that is not Euclidean, prefer 'average' or 'complete'.
         method: Linkage method ('ward', 'complete', 'average', 'single').
 
     Returns:
@@ -620,9 +619,9 @@ def mlp_feature_blocks(
     """Split MLP parameters into per-neuron and per-network features.
 
     The quantities :func:`prepare_mlp_for_clustering` concatenates, kept
-    in per-neuron blocks so that :func:`permutation_invariant_distances`
-    can quotient out the hidden-neuron permutation itself rather than
-    inherit whatever order its inputs arrive in.
+    in per-neuron blocks for :func:`permutation_invariant_distances`,
+    which quotients out the hidden-neuron permutation itself and so does
+    not depend on the order its inputs arrive in.
 
     Standardization pools over neurons as well as models, so a feature
     dimension is scaled the same way in every neuron slot. Scaling each
@@ -680,10 +679,9 @@ def permutation_invariant_distances(
     The distance between two models is the smallest Euclidean distance
     over all ways of matching one model's hidden neurons to the other's,
     found by optimal assignment. This is the metric of the quotient by
-    the permutation group, and unlike canonicalizing the order by
-    sorting it is continuous: sorting has to break ties, and two models
-    whose neurons share an angle can then be ordered differently for
-    numerical reasons alone and come out far apart.
+    the permutation group. It is continuous in the model parameters,
+    including where two hidden neurons share an angle and no ordering of
+    them is determined.
 
     Args:
         neuron_features: Per-neuron features, shape

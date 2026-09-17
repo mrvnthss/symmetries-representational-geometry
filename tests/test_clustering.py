@@ -588,9 +588,9 @@ class TestPermutationInvariantDistances:
         assert distances[0] < 1e-8
 
     def test_shared_angle_survives_a_reordering(self) -> None:
-        """Equal angles leave the sort order free; the metric must not care."""
-        # Both neurons on one angle, so a sort has only later keys to go
-        # on and can order two such models either way.
+        """A reordering costs nothing even when both neurons share an angle."""
+        # Both neurons on one angle, the two models differing only in
+        # the order the neurons are given in.
         model = geometry2d.mlp_from_geometry(
             angles=(0.75, 0.75),
             distances=(-1.4, 0.0),
