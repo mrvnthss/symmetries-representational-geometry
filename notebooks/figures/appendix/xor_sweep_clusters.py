@@ -40,7 +40,6 @@ with app.setup:
 
     ROW_LABEL = "Solution {number}\n($n = {size}$)"
 
-    # Ward is defined on coordinates; the quotient metric has none.
     LINKAGE_METHOD = "average"
 
 
@@ -248,9 +247,9 @@ def plot_sweep_clusters(
     output_path: Path | None = None,
     show: bool = False,
 ) -> plt.Figure:
-    """Plot the members of each cluster the sweep matched.
+    """Plot the members of each cluster the sweep produced.
 
-    One row per matched cluster, ordered by the closed-form solution it
+    One row per cluster, ordered by the closed-form solution it
     matches. A row leads with its cluster's most
     representative member and continues with the members furthest from
     it, so what a row shows is how far a cluster's extremes stray from
@@ -344,8 +343,8 @@ def _():
     export_sweep_clusters_variants(
         output_dir=OUTPUT_DIR,
         output_stem=OUTPUT_STEM,
-        fig_size=(3.6, 6.2),
-        n_reps=3,
+        fig_size=(5.7, 6.2),
+        n_reps=5,
         data_size=40.0,
         data_edge_lw=0.5,
         boundary_lw=0.85,

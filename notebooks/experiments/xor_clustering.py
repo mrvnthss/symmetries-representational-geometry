@@ -134,8 +134,7 @@ def _(
     RELU_THRESHOLD_IDX = 0
 
     # Compare networks under the metric that quotients out the
-    # hidden-neuron permutation. Ward is defined on coordinates, which
-    # that metric does not have, so the linkage is average.
+    # hidden-neuron permutation.
     _relu_neurons, _relu_networks = clustering.mlp_feature_blocks(
         relu_angles,
         relu_distances,
