@@ -13,6 +13,7 @@ with app.setup:
     import matplotlib.pyplot as plt
     import numpy as np
     from experiments.sweeps import relu_sweep_models
+    from scipy.spatial.distance import squareform
 
     from symmetries import clustering
     from symmetries import xor
@@ -132,7 +133,10 @@ def _(
 ):
     RELU_THRESHOLD_IDX = 0
 
-    relu_X = clustering.prepare_mlp_for_clustering(
+    # Compare networks under the metric that quotients out the
+    # hidden-neuron permutation. Ward is defined on coordinates, which
+    # that metric does not have, so the linkage is average.
+    _relu_neurons, _relu_networks = clustering.mlp_feature_blocks(
         relu_angles,
         relu_distances,
         relu_gains,
@@ -141,7 +145,11 @@ def _(
         standardize=True,
         quotient_hidden_rescaling=True,
     )
-    relu_Z = clustering.compute_linkage(relu_X)
+    _relu_condensed = clustering.permutation_invariant_distances(
+        _relu_neurons, _relu_networks
+    )
+    relu_distance_matrix = squareform(_relu_condensed)
+    relu_Z = clustering.compute_linkage(_relu_condensed, method="average")
 
     relu_thresholds, _relu_gaps, _relu_n_clusters = (
         clustering.find_threshold_by_gap(relu_Z, top_k=5)
@@ -151,23 +159,24 @@ def _(
         relu_Z, threshold=relu_thresholds[RELU_THRESHOLD_IDX]
     )
     plt.show()
-    return RELU_THRESHOLD_IDX, relu_X, relu_Z, relu_thresholds
+    return RELU_THRESHOLD_IDX, relu_Z, relu_distance_matrix, relu_thresholds
 
 
 @app.cell
 def _(
     RELU_THRESHOLD_IDX,
-    relu_X,
     relu_Z,
     relu_converged_models,
+    relu_distance_matrix,
     relu_thresholds,
 ):
     _fig, _ax, _relu_reps = clustering.plot_cluster_representatives(
         relu_converged_models,
-        relu_X,
+        relu_distance_matrix,
         relu_Z,
         distance_threshold=relu_thresholds[RELU_THRESHOLD_IDX],
         n_reps=4,
+        distance_matrix=relu_distance_matrix,
         data=xor.xor_dataset(),
         data_kwargs={"cmap": mpl_colors.ListedColormap(["C0", "C1"])},
         hyperplane_kwargs={"normal_lw": 1.0},
