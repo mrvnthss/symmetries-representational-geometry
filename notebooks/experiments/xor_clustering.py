@@ -7,15 +7,14 @@ with app.setup:
     import resource
     import time
 
-    import jax
     import jax.numpy as jnp
     import marimo as mo
     import matplotlib.colors as mpl_colors
     import matplotlib.pyplot as plt
     import numpy as np
+    from experiments.sweeps import relu_sweep_models
 
     from symmetries import clustering
-    from symmetries import training
     from symmetries import xor
 
     plt.style.use("./style.mplstyle")
@@ -28,18 +27,11 @@ def _():
 
     Train two-hidden-unit networks on the XOR task across many random seeds,
     then cluster the converged solutions by their geometry.
+
+    The sweep is cached on disk via `mo.persistent_cache`; the first run
+    takes about ten minutes, subsequent runs are instantaneous.
     """)
     return
-
-
-@app.cell
-def _():
-    N_SEEDS = 1000
-    N_STEPS = int(1e7)
-    LOSS_EVERY = int(1e4)
-    TARGET_LOSS = 1e-12
-    SEED = 0
-    return LOSS_EVERY, N_SEEDS, N_STEPS, SEED, TARGET_LOSS
 
 
 @app.cell(hide_code=True)
@@ -51,23 +43,9 @@ def _():
 
 
 @app.cell
-def _(LOSS_EVERY, N_SEEDS, N_STEPS, SEED, TARGET_LOSS):
+def _():
     _t0 = time.perf_counter()
-    relu_trained, _relu_losses, relu_converged = training.seed_sweep(
-        n_seeds=N_SEEDS,
-        n_hidden=2,
-        activation="relu",
-        n_steps=N_STEPS,
-        target_loss=TARGET_LOSS,
-        loss_every=LOSS_EVERY,
-        key=jax.random.PRNGKey(SEED),
-    )
-    jax.tree.map(
-        lambda y: (
-            y.block_until_ready() if hasattr(y, "block_until_ready") else y
-        ),
-        (relu_trained, _relu_losses, relu_converged),
-    )
+    relu_trained, relu_converged = relu_sweep_models()
     relu_sweep_minutes = (time.perf_counter() - _t0) / 60
     # ru_maxrss is bytes on macOS, KiB on Linux
     relu_peak_rss_gb = (
