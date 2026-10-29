@@ -5,9 +5,10 @@ in Inkscape. These serve as base templates for code-generated figures.
 
 ## Files
 
-- `hidden-unit.svg`: Base neuron template with labeled layers for
-  programmatic colorization. Used by `panel_d_symmetries.py` to generate
-  the symmetry stack visualizations.
+- [hidden_unit.svg](hidden_unit.svg): Base neuron template with labeled
+  layers for programmatic colorization. Used by
+  [parameter_symmetries.py](../../../notebooks/figures/main/dissociation/parameter_symmetries.py)
+  to generate the symmetry illustrations in Figure 1.
 
 ## Workflow
 
@@ -21,12 +22,13 @@ in Inkscape. These serve as base templates for code-generated figures.
 3. **Preserve layer structure**: The template uses Inkscape layers to organize
    elements. Keep the layer hierarchy intact for correct rendering.
 
-4. **Run notebooks to regenerate**: After editing a template, re-run the
-   relevant notebook to regenerate the derived figures in `generated/`.
+4. **Run the notebook to regenerate**: After editing the template, re-run
+   `parameter_symmetries.py` to regenerate the illustrations in
+   [figures/main/dissociation/symmetries/](../../main/dissociation/symmetries/).
 
 ## Label Conventions
 
-The `hidden-unit.svg` template uses these labels for colorization:
+The `hidden_unit.svg` template uses these labels for colorization:
 
 - `w_in_1`, `w_in_2`, `w_in_3`: Incoming weights
 - `bias`: Bias input

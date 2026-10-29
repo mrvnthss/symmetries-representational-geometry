@@ -16,9 +16,8 @@ keywords = [
 ]
 requires-python = ">=3.13"
 dependencies = [
-    # JAX - Linux (CUDA)
-    "nvidia-cublas>=13.0 ; sys_platform == 'linux'",
-    "jax[cuda13]>=0.10 ; sys_platform == 'linux'",
+    # JAX - Linux (CPU; CUDA support is optional)
+    "jax>=0.10 ; sys_platform == 'linux'",
     "jaxlib>=0.10 ; sys_platform == 'linux'",
     # JAX - macOS Apple Silicon
     # Use standard JAX for now, see https://github.com/jax-ml/jax/issues/26968
@@ -31,16 +30,23 @@ dependencies = [
     "jax>=0.10 ; sys_platform != 'linux' and sys_platform != 'darwin'",
     "jaxlib>=0.10 ; sys_platform != 'linux' and sys_platform != 'darwin'",
     # Remaining dependencies
-    "cairosvg>=2.9.0",
     "coloraide>=8.7",
     "daltonize>=0.2.0",
     "equinox>=0.13.8",
     "jaxtyping>=0.2.25",
     "marimo[recommended]>=0.19.4",
     "matplotlib>=3.10.8",
+    "numpy>=2.4.2",
     "optax>=0.2.5",
+    "scipy>=1.17.0",
     "setuptools>=69.0.0,<75.0.0",  # pinned to <75.0.0 due to daltonize dependency issue
     "defusedxml>=0.7.1",
+]
+
+[project.optional-dependencies]
+cuda = [
+    "jax[cuda13]>=0.10 ; sys_platform == 'linux'",
+    "nvidia-cublas>=13.0 ; sys_platform == 'linux'",
 ]
 
 [dependency-groups]

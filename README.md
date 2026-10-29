@@ -20,7 +20,15 @@ cd symmetries-representational-geometry
 uv sync --locked
 ```
 
-This creates a virtual environment and installs the `symmetries` package together with the dependencies pinned in `uv.lock`. Linux environments include CUDA 13 JAX packages; macOS uses CPU JAX. The paper's XOR sweep used the CPU backend, as shown below.
+This creates a virtual environment and installs the `symmetries` package together with the dependencies pinned in `uv.lock`. The default installation uses CPU JAX, as did the paper's XOR sweep.
+
+For NVIDIA GPUs on Linux, install the optional CUDA 13 dependencies instead:
+
+```bash
+uv sync --locked --extra cuda
+```
+
+Add `--extra cuda` to the `uv run` commands below when using GPU support. A compatible NVIDIA driver is required; see the [JAX installation guide](https://docs.jax.dev/en/latest/installation.html#nvidia-gpu).
 
 ## Reproducing the figures
 
