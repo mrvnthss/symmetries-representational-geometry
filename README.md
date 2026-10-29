@@ -1,5 +1,7 @@
 # Parameter symmetries determine representational geometry in overparameterized nonlinear networks
 
+**ICML 2026 workshop version.** For the current paper, code, and citation, please see the [NeurIPS version](https://github.com/mrvnthss/symmetries-representational-geometry/tree/neurips).
+
 Code to reproduce figures from our paper "[Parameter symmetries determine representational geometry in overparameterized nonlinear networks](https://openreview.net/forum?id=CT8TbdqYmn)".
 
 <p align="center">
@@ -15,7 +17,7 @@ Representations are routinely used in machine learning, psychology, and neurosci
 This project uses [`uv`](https://docs.astral.sh/uv/) for dependency management. With `uv` installed, clone the repository and sync the environment:
 
 ```bash
-git clone https://github.com/mrvnthss/symmetries-representational-geometry.git
+git clone --branch icml-2026 https://github.com/mrvnthss/symmetries-representational-geometry.git
 cd symmetries-representational-geometry
 uv sync
 ```
