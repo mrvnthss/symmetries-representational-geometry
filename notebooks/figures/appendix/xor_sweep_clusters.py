@@ -13,7 +13,7 @@ with app.setup:
     from experiments.sweeps import relu_sweep_models
     from figures.appendix.xor_solutions import NEURON_COLORS
     from figures.appendix.xor_solutions import data_logit_magnitude
-    from figures.fonts.config import FIGURE_FONT_CONFIGS
+    from figures.fonts.config import FIGURE_FONT_CONFIG
     from figures.fonts.config import register_bundled_fonts
     from jaxtyping import Array
     from scipy.spatial.distance import squareform
@@ -309,7 +309,7 @@ def plot_sweep_clusters(
 
 
 @app.function
-def export_sweep_clusters_variants(
+def export_sweep_clusters(
     *,
     output_dir: Path,
     output_stem: str,
@@ -320,27 +320,25 @@ def export_sweep_clusters_variants(
     boundary_lw: float,
     normal_lw: float,
 ) -> None:
-    """Export submission and preprint variants with matched fonts."""
-    for variant, font_config in FIGURE_FONT_CONFIGS.items():
-        variant_output_dir = output_dir / variant
-        variant_output_dir.mkdir(parents=True, exist_ok=True)
-        output_path = variant_output_dir / f"{output_stem}.pdf"
-        with plt.rc_context(font_config):
-            fig = plot_sweep_clusters(
-                fig_size=fig_size,
-                n_reps=n_reps,
-                data_size=data_size,
-                data_edge_lw=data_edge_lw,
-                boundary_lw=boundary_lw,
-                normal_lw=normal_lw,
-                output_path=output_path,
-            )
-        plt.close(fig)
+    """Export the figure with the paper's fonts."""
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output_path = output_dir / f"{output_stem}.pdf"
+    with plt.rc_context(FIGURE_FONT_CONFIG):
+        fig = plot_sweep_clusters(
+            fig_size=fig_size,
+            n_reps=n_reps,
+            data_size=data_size,
+            data_edge_lw=data_edge_lw,
+            boundary_lw=boundary_lw,
+            normal_lw=normal_lw,
+            output_path=output_path,
+        )
+    plt.close(fig)
 
 
 @app.cell
 def _():
-    export_sweep_clusters_variants(
+    export_sweep_clusters(
         output_dir=OUTPUT_DIR,
         output_stem=OUTPUT_STEM,
         fig_size=(5.7, 6.2),

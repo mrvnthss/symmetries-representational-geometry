@@ -11,7 +11,7 @@ with app.setup:
     import matplotlib.axes as mpl_axes
     import matplotlib.pyplot as plt
     import numpy as np
-    from figures.fonts.config import FIGURE_FONT_CONFIGS
+    from figures.fonts.config import FIGURE_FONT_CONFIG
     from figures.fonts.config import register_bundled_fonts
     from jaxtyping import Array
     from matplotlib import colorbar as mpl_colorbar
@@ -82,15 +82,7 @@ with app.setup:
         r"$\sqrt{2}$",
     )
 
-    # MathText does not apply italic correction between custom italic and
-    # roman fonts. Add the corrections needed by the Libertinus glyphs.
-    COLORBAR_LABELS = {
-        "submission": r"$f_{\boldsymbol{\theta}}(\mathbf{x})$",
-        "preprint": (
-            r"$f_{\boldsymbol{\theta}}\hspace{0.15}"
-            r"(\mathbf{x}\hspace{0.12})$"
-        ),
-    }
+    COLORBAR_LABEL = r"$f_{\boldsymbol{\theta}}(\mathbf{x})$"
 
     # Height of a legend handle box, in multiples of the legend font
     # size. It sets how large the handles may be drawn (see
@@ -476,7 +468,7 @@ def plot_xor_solutions(
 
 
 @app.function
-def export_xor_solutions_variants(
+def export_xor_solutions(
     *,
     output_dir: Path,
     output_stem: str,
@@ -486,28 +478,26 @@ def export_xor_solutions_variants(
     colorbar_kwargs: dict,
     legend_y: float,
 ) -> None:
-    """Export submission and preprint variants with matched fonts."""
-    for variant, font_config in FIGURE_FONT_CONFIGS.items():
-        variant_output_dir = output_dir / variant
-        variant_output_dir.mkdir(parents=True, exist_ok=True)
-        output_path = variant_output_dir / f"{output_stem}.pdf"
-        with plt.rc_context(font_config):
-            fig = plot_xor_solutions(
-                fig_size=fig_size,
-                data_size=data_size,
-                normal_lw=normal_lw,
-                legend_labels=FIGURE_LEGEND_LABELS,
-                colorbar_label=COLORBAR_LABELS[variant],
-                colorbar_kwargs=colorbar_kwargs,
-                legend_y=legend_y,
-                output_path=output_path,
-            )
-        plt.close(fig)
+    """Export the figure with the paper's fonts."""
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output_path = output_dir / f"{output_stem}.pdf"
+    with plt.rc_context(FIGURE_FONT_CONFIG):
+        fig = plot_xor_solutions(
+            fig_size=fig_size,
+            data_size=data_size,
+            normal_lw=normal_lw,
+            legend_labels=FIGURE_LEGEND_LABELS,
+            colorbar_label=COLORBAR_LABEL,
+            colorbar_kwargs=colorbar_kwargs,
+            legend_y=legend_y,
+            output_path=output_path,
+        )
+    plt.close(fig)
 
 
 @app.cell
 def _():
-    export_xor_solutions_variants(
+    export_xor_solutions(
         output_dir=OUTPUT_DIR,
         output_stem=OUTPUT_STEM,
         fig_size=(6.8, 4.29),

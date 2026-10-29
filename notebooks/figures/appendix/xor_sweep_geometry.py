@@ -11,7 +11,7 @@ with app.setup:
     import matplotlib.pyplot as plt
     import numpy as np
     from experiments.sweeps import relu_sweep_models
-    from figures.fonts.config import FIGURE_FONT_CONFIGS
+    from figures.fonts.config import FIGURE_FONT_CONFIG
     from figures.fonts.config import register_bundled_fonts
     from matplotlib.transforms import ScaledTranslation
 
@@ -219,7 +219,7 @@ def plot_sweep_geometry(
 
 
 @app.function
-def export_sweep_geometry_variants(
+def export_sweep_geometry(
     *,
     output_dir: Path,
     output_stem: str,
@@ -232,29 +232,27 @@ def export_sweep_geometry_variants(
     angle_count_max: float,
     angle_count_ticks: tuple[int, ...],
 ) -> None:
-    """Export submission and preprint variants with matched fonts."""
-    for variant, font_config in FIGURE_FONT_CONFIGS.items():
-        variant_output_dir = output_dir / variant
-        variant_output_dir.mkdir(parents=True, exist_ok=True)
-        output_path = variant_output_dir / f"{output_stem}.pdf"
-        with plt.rc_context(font_config):
-            fig = plot_sweep_geometry(
-                fig_size=fig_size,
-                distance_bin_width=distance_bin_width,
-                distance_range=distance_range,
-                n_angle_bins=n_angle_bins,
-                count_limits=count_limits,
-                count_ticks=count_ticks,
-                angle_count_max=angle_count_max,
-                angle_count_ticks=angle_count_ticks,
-                output_path=output_path,
-            )
-        plt.close(fig)
+    """Export the figure with the paper's fonts."""
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output_path = output_dir / f"{output_stem}.pdf"
+    with plt.rc_context(FIGURE_FONT_CONFIG):
+        fig = plot_sweep_geometry(
+            fig_size=fig_size,
+            distance_bin_width=distance_bin_width,
+            distance_range=distance_range,
+            n_angle_bins=n_angle_bins,
+            count_limits=count_limits,
+            count_ticks=count_ticks,
+            angle_count_max=angle_count_max,
+            angle_count_ticks=angle_count_ticks,
+            output_path=output_path,
+        )
+    plt.close(fig)
 
 
 @app.cell
 def _():
-    export_sweep_geometry_variants(
+    export_sweep_geometry(
         output_dir=OUTPUT_DIR,
         output_stem=OUTPUT_STEM,
         fig_size=(5.8, 3.1),

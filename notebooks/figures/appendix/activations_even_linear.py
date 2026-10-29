@@ -15,7 +15,7 @@ with app.setup:
     from figures.appendix.common import DISPLAY_NAMES
     from figures.appendix.common import component_color
     from figures.appendix.common import draw_origin
-    from figures.fonts.config import FIGURE_FONT_CONFIGS
+    from figures.fonts.config import FIGURE_FONT_CONFIG
     from figures.fonts.config import register_bundled_fonts
     from jaxtyping import Array
 
@@ -34,16 +34,7 @@ with app.setup:
     OUTPUT_DIR = Path("../figures/appendix")
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-    FIGURE_LEGEND_LABELS = {
-        "submission": (r"$f(x)$", r"$e(x)$", r"$o(x)$"),
-        # MathText does not apply italic correction between custom italic and
-        # roman fonts. Add the corrections needed by the Libertinus glyphs.
-        "preprint": (
-            r"$f\hspace{0.25}(x\hspace{0.12})$",
-            r"$e\hspace{0.10}(x\hspace{0.12})$",
-            r"$o\hspace{0.10}(x\hspace{0.12})$",
-        ),
-    }
+    FIGURE_LEGEND_LABELS = (r"$f(x)$", r"$e(x)$", r"$o(x)$")
 
     # Even-linear activation functions
     ACTIVATIONS = [
@@ -179,7 +170,7 @@ def plot_activation_components_grid(
 
 
 @app.function
-def export_activation_components_grid_variants(
+def export_activation_components_grid(
     activation_specs: Sequence[activations.ActivationSpec],
     *,
     output_dir: Path,
@@ -192,30 +183,28 @@ def export_activation_components_grid_variants(
     n_points: int,
     z_orders: tuple[int, int, int],
 ) -> None:
-    """Export submission and preprint variants with matched fonts."""
-    for variant, font_config in FIGURE_FONT_CONFIGS.items():
-        variant_output_dir = output_dir / variant
-        variant_output_dir.mkdir(parents=True, exist_ok=True)
-        output_path = variant_output_dir / f"{output_stem}.pdf"
-        with plt.rc_context(font_config):
-            fig = plot_activation_components_grid(
-                activation_specs,
-                fig_size=fig_size,
-                n_rows=n_rows,
-                n_cols=n_cols,
-                y_range=y_range,
-                x_to_y_ratio=x_to_y_ratio,
-                n_points=n_points,
-                z_orders=z_orders,
-                legend_labels=FIGURE_LEGEND_LABELS[variant],
-                output_path=output_path,
-            )
-        plt.close(fig)
+    """Export the figure with the paper's fonts."""
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output_path = output_dir / f"{output_stem}.pdf"
+    with plt.rc_context(FIGURE_FONT_CONFIG):
+        fig = plot_activation_components_grid(
+            activation_specs,
+            fig_size=fig_size,
+            n_rows=n_rows,
+            n_cols=n_cols,
+            y_range=y_range,
+            x_to_y_ratio=x_to_y_ratio,
+            n_points=n_points,
+            z_orders=z_orders,
+            legend_labels=FIGURE_LEGEND_LABELS,
+            output_path=output_path,
+        )
+    plt.close(fig)
 
 
 @app.cell
 def _():
-    export_activation_components_grid_variants(
+    export_activation_components_grid(
         ACTIVATIONS,
         output_dir=OUTPUT_DIR,
         output_stem="activations-even-linear",

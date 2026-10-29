@@ -8,9 +8,7 @@ with app.setup:
     from pathlib import Path
 
     import matplotlib.pyplot as plt
-    from activations_even_linear import (
-        export_activation_components_grid_variants,
-    )
+    from activations_even_linear import export_activation_components_grid
 
     logging.getLogger("fontTools").setLevel(logging.ERROR)
 
@@ -33,7 +31,7 @@ with app.setup:
 
 @app.cell
 def _():
-    export_activation_components_grid_variants(
+    export_activation_components_grid(
         ACTIVATIONS,
         output_dir=OUTPUT_DIR,
         output_stem="activations-constant-odd",

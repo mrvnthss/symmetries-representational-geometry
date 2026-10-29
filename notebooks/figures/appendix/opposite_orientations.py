@@ -12,7 +12,7 @@ with app.setup:
     import matplotlib.pyplot as plt
     from figures.appendix.common import CURVE_COLOR
     from figures.appendix.common import component_color
-    from figures.fonts.config import FIGURE_FONT_CONFIGS
+    from figures.fonts.config import FIGURE_FONT_CONFIG
     from figures.fonts.config import register_bundled_fonts
     from jaxtyping import Array
 
@@ -57,46 +57,18 @@ with app.setup:
     HUES = {"pos": "orange", "neg": "teal", "lin": "grey"}
 
     # Per-neuron terms, in the order of NEURONS, using the z_j shorthand
-    # of the example (z_1 = x+1, z_2 = x, z_3 = x-1). MathText does not
-    # apply italic correction between custom italic and roman fonts. Add
-    # the corrections needed by the Libertinus glyphs.
+    # of the example (z_1 = x+1, z_2 = x, z_3 = x-1).
     TERM_LABELS = {
-        "submission": {
-            "pos": (r"$\psi(z_{1})$", r"$-2\,\psi(z_{2})$", r"$\psi(z_{3})$"),
-            "neg": (
-                r"$\psi(-z_{1})$",
-                r"$-2\,\psi(-z_{2})$",
-                r"$\psi(-z_{3})$",
-            ),
-            "lin": (r"$-z_{1}$", r"$2z_{2}$", r"$-z_{3}$"),
-        },
-        "preprint": {
-            "pos": (
-                r"$\psi\hspace{0.25}(z_{1}\hspace{0.12})$",
-                r"$-2\,\psi\hspace{0.25}(z_{2}\hspace{0.12})$",
-                r"$\psi\hspace{0.25}(z_{3}\hspace{0.12})$",
-            ),
-            "neg": (
-                r"$\psi\hspace{0.25}(-z_{1}\hspace{0.12})$",
-                r"$-2\,\psi\hspace{0.25}(-z_{2}\hspace{0.12})$",
-                r"$\psi\hspace{0.25}(-z_{3}\hspace{0.12})$",
-            ),
-            "lin": (r"$-z_{1}$", r"$2z_{2}$", r"$-z_{3}$"),
-        },
+        "pos": (r"$\psi(z_{1})$", r"$-2\,\psi(z_{2})$", r"$\psi(z_{3})$"),
+        "neg": (r"$\psi(-z_{1})$", r"$-2\,\psi(-z_{2})$", r"$\psi(-z_{3})$"),
+        "lin": (r"$-z_{1}$", r"$2z_{2}$", r"$-z_{3}$"),
     }
 
     # Labeled in place, so the legend stays a single row of three terms.
     ANNOTATIONS = {
-        "submission": {
-            "pos": r"$\psi(1-|x|)$",
-            "neg": r"$\psi(1-|x|)$",
-            "lin": r"$\Sigma \equiv 0$",
-        },
-        "preprint": {
-            "pos": r"$\psi\hspace{0.25}(1-|x\hspace{0.12}|)$",
-            "neg": r"$\psi\hspace{0.25}(1-|x\hspace{0.12}|)$",
-            "lin": r"$\Sigma \equiv 0$",
-        },
+        "pos": r"$\psi(1-|x|)$",
+        "neg": r"$\psi(1-|x|)$",
+        "lin": r"$\Sigma \equiv 0$",
     }
 
     # (x, y, horizontal alignment, vertical alignment) per panel, in the
@@ -267,7 +239,7 @@ def plot_opposite_orientations(
 
 
 @app.function
-def export_opposite_orientations_variants(
+def export_opposite_orientations(
     *,
     output_dir: Path,
     output_stem: str,
@@ -277,28 +249,26 @@ def export_opposite_orientations_variants(
     n_points: int,
     z_orders: tuple[int, int],
 ) -> None:
-    """Export submission and preprint variants with matched fonts."""
-    for variant, font_config in FIGURE_FONT_CONFIGS.items():
-        variant_output_dir = output_dir / variant
-        variant_output_dir.mkdir(parents=True, exist_ok=True)
-        output_path = variant_output_dir / f"{output_stem}.pdf"
-        with plt.rc_context(font_config):
-            fig = plot_opposite_orientations(
-                fig_size=fig_size,
-                x_range=x_range,
-                y_range=y_range,
-                n_points=n_points,
-                z_orders=z_orders,
-                term_labels=TERM_LABELS[variant],
-                annotations=ANNOTATIONS[variant],
-                output_path=output_path,
-            )
-        plt.close(fig)
+    """Export the figure with the paper's fonts."""
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output_path = output_dir / f"{output_stem}.pdf"
+    with plt.rc_context(FIGURE_FONT_CONFIG):
+        fig = plot_opposite_orientations(
+            fig_size=fig_size,
+            x_range=x_range,
+            y_range=y_range,
+            n_points=n_points,
+            z_orders=z_orders,
+            term_labels=TERM_LABELS,
+            annotations=ANNOTATIONS,
+            output_path=output_path,
+        )
+    plt.close(fig)
 
 
 @app.cell
 def _():
-    export_opposite_orientations_variants(
+    export_opposite_orientations(
         output_dir=OUTPUT_DIR,
         output_stem=OUTPUT_STEM,
         fig_size=(8.0, 3.1),
