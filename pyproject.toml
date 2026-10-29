@@ -1,7 +1,7 @@
 [project]
 name = "symmetries-representational-geometry"
 version = "0.1.0"
-description = "Code accompanying the paper \"Parameter symmetries determine representational geometry in overparameterized nonlinear networks\" (ICML 2026 Workshop on Weight-Space Symmetries)."
+description = "Code accompanying the paper \"Parameter symmetries determine representational geometry in overparameterized nonlinear networks\" (NeurIPS 2026)."
 readme = "README.md"
 license = "MIT"
 authors = [
@@ -54,7 +54,7 @@ dev = [
 
 [project.urls]
 Repository = "https://github.com/mrvnthss/symmetries-representational-geometry"
-Paper = "https://openreview.net/forum?id=CT8TbdqYmn"
+Paper = "https://arxiv.org/abs/2609.39078"
 
 [build-system]
 requires = ["hatchling"]
