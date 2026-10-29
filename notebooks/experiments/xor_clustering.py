@@ -5,6 +5,7 @@ app = marimo.App(width="medium")
 
 with app.setup:
     import resource
+    import sys
     import time
 
     import jax.numpy as jnp
@@ -49,8 +50,8 @@ def _():
     relu_trained, relu_converged = relu_sweep_models()
     relu_sweep_minutes = (time.perf_counter() - _t0) / 60
     # ru_maxrss is bytes on macOS, KiB on Linux
-    relu_peak_rss_gb = (
-        resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024**3
+    relu_peak_rss_gb = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / (
+        1024**3 if sys.platform == "darwin" else 1024**2
     )
     print(
         f"ReLU sweep: {relu_sweep_minutes:.2f} min, "

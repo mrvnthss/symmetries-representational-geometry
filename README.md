@@ -36,18 +36,18 @@ or run it as a read-only app:
 uv run --locked --directory notebooks marimo run figures/main/primitives/components.py
 ```
 
-| Paper figure | Notebook, relative to `notebooks/`             | Output                                                          |
-| ------------ | ---------------------------------------------- | --------------------------------------------------------------- |
-| Figure 1     | `figures/main/dissociation/components.py`      | XOR networks and representational similarity matrices           |
-| Figure 1     | `figures/main/dissociation/symmetries.py`      | Parameter-symmetry illustrations                                |
-| Figure 2     | `figures/main/primitives/components.py`        | Primitive feature transformations and representational geometry |
-| Figure B.1   | `figures/appendix/opposite_orientations.py`    | Oppositely oriented ReLU parameterizations                      |
-| Figure C.1   | `figures/appendix/activations_even_linear.py`  | Even-linear activation decompositions                           |
-| Figure C.2   | `figures/appendix/activations_constant_odd.py` | Constant-odd activation decompositions                          |
-| Figure C.3   | `figures/appendix/activations_remaining.py`    | Remaining activation functions                                  |
-| Figure G.1   | `figures/appendix/xor_sweep_geometry.py`       | Boundary geometry of the converged XOR networks                 |
-| Figure G.2   | `figures/appendix/xor_sweep_clusters.py`       | Representatives of the six solution clusters                    |
-| Figure G.3   | `figures/appendix/xor_solutions.py`            | The six analytical XOR ReLU solutions                           |
+| Paper figure | Notebook, relative to `notebooks/`                  | Output                                                          |
+| ------------ | --------------------------------------------------- | --------------------------------------------------------------- |
+| Figure 1     | `figures/main/dissociation/components.py`           | XOR networks and representational similarity matrices           |
+| Figure 1     | `figures/main/dissociation/parameter_symmetries.py` | Parameter-symmetry illustrations                                |
+| Figure 2     | `figures/main/primitives/components.py`             | Primitive feature transformations and representational geometry |
+| Figure B.1   | `figures/appendix/opposite_orientations.py`         | Oppositely oriented ReLU parameterizations                      |
+| Figure C.1   | `figures/appendix/activations_even_linear.py`       | Even-linear activation decompositions                           |
+| Figure C.2   | `figures/appendix/activations_constant_odd.py`      | Constant-odd activation decompositions                          |
+| Figure C.3   | `figures/appendix/activations_remaining.py`         | Remaining activation functions                                  |
+| Figure G.1   | `figures/appendix/xor_sweep_geometry.py`            | Boundary geometry of the converged XOR networks                 |
+| Figure G.2   | `figures/appendix/xor_sweep_clusters.py`            | Representatives of the six solution clusters                    |
+| Figure G.3   | `figures/appendix/xor_solutions.py`                 | The six analytical XOR ReLU solutions                           |
 
 The appendix notebooks export PDFs to `figures/appendix/submission/` with the conference fonts and to `figures/appendix/preprint/` with the preprint fonts. The fonts and their licenses are documented in [notebooks/figures/fonts/README.md](notebooks/figures/fonts/README.md).
 
