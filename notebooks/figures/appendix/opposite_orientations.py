@@ -68,7 +68,7 @@ with app.setup:
     ANNOTATIONS = {
         "pos": r"$\psi(1-|x|)$",
         "neg": r"$\psi(1-|x|)$",
-        "lin": r"$\Sigma \equiv 0$",
+        "lin": r"$f_{\boldsymbol{\eta}} \equiv \mathbf{0}$",
     }
 
     # (x, y, horizontal alignment, vertical alignment) per panel, in the
