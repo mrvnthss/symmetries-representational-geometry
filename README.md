@@ -15,7 +15,7 @@ Representations are routinely used across machine learning, psychology, and neur
 This project uses [`uv`](https://docs.astral.sh/uv/) for dependency management and requires Python 3.13 or newer. With `uv` installed, clone the repository and sync the pinned environment:
 
 ```bash
-git clone --branch neurips https://github.com/mrvnthss/symmetries-representational-geometry.git
+git clone https://github.com/mrvnthss/symmetries-representational-geometry.git
 cd symmetries-representational-geometry
 uv sync --locked
 ```
