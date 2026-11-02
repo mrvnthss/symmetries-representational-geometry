@@ -13,6 +13,7 @@ with app.setup:
     import numpy as np
     from figures.fonts.config import FIGURE_FONT_CONFIG
     from figures.fonts.config import register_bundled_fonts
+    from figures.layout import scale_pdf_to_text_width
     from jaxtyping import Array
     from matplotlib import colorbar as mpl_colorbar
     from matplotlib import colors as mpl_colors
@@ -477,8 +478,22 @@ def export_xor_solutions(
     normal_lw: float,
     colorbar_kwargs: dict,
     legend_y: float,
+    width_fraction: float,
 ) -> None:
-    """Export the figure with the paper's fonts."""
+    """Export the figure with the paper's fonts, at its width in the paper.
+
+    Args:
+        output_dir: Directory to write the PDF to.
+        output_stem: File name of the PDF, without extension.
+        fig_size: Figure size in inches, at which the figure is designed.
+        data_size: Marker area of the data points, in points squared.
+        normal_lw: Line width of the boundary normal arrows.
+        colorbar_kwargs: Arguments passed to ``fig.colorbar``.
+        legend_y: Vertical anchor of the legend, in axes coordinates of
+          the bottom center panel.
+        width_fraction: Width of the figure in the paper, as a fraction
+          of the text width.
+    """
     output_dir.mkdir(parents=True, exist_ok=True)
     output_path = output_dir / f"{output_stem}.pdf"
     with plt.rc_context(FIGURE_FONT_CONFIG):
@@ -493,6 +508,7 @@ def export_xor_solutions(
             output_path=output_path,
         )
     plt.close(fig)
+    scale_pdf_to_text_width(output_path, width_fraction)
 
 
 @app.cell
@@ -509,6 +525,7 @@ def _():
             "pad": 0.02,
         },
         legend_y=-0.144,
+        width_fraction=0.85,  # \includegraphics[width=0.85\textwidth]
     )
     return
 

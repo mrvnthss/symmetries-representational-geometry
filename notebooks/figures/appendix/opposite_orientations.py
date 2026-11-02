@@ -14,6 +14,7 @@ with app.setup:
     from figures.appendix.common import component_color
     from figures.fonts.config import FIGURE_FONT_CONFIG
     from figures.fonts.config import register_bundled_fonts
+    from figures.layout import scale_pdf_to_text_width
     from jaxtyping import Array
 
     from symmetries import activations
@@ -248,8 +249,22 @@ def export_opposite_orientations(
     y_range: float,
     n_points: int,
     z_orders: tuple[int, int],
+    width_fraction: float,
 ) -> None:
-    """Export the figure with the paper's fonts."""
+    """Export the figure with the paper's fonts, at its width in the paper.
+
+    Args:
+        output_dir: Directory to write the PDF to.
+        output_stem: File name of the PDF, without extension.
+        fig_size: Figure size in inches, at which the figure is designed.
+        x_range: Half-width of the shared x-axis limits.
+        y_range: Half-height of the shared y-axis limits.
+        n_points: Number of points at which to evaluate the terms.
+        z_orders: Base z-order of the per-neuron terms and z-order of
+          their sum.
+        width_fraction: Width of the figure in the paper, as a fraction
+          of the text width.
+    """
     output_dir.mkdir(parents=True, exist_ok=True)
     output_path = output_dir / f"{output_stem}.pdf"
     with plt.rc_context(FIGURE_FONT_CONFIG):
@@ -264,6 +279,7 @@ def export_opposite_orientations(
             output_path=output_path,
         )
     plt.close(fig)
+    scale_pdf_to_text_width(output_path, width_fraction)
 
 
 @app.cell
@@ -276,6 +292,7 @@ def _():
         y_range=2.4,
         n_points=1001,
         z_orders=(1, 4),
+        width_fraction=0.95,  # \includegraphics[width=0.95\textwidth]
     )
     return
 

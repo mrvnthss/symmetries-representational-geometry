@@ -57,7 +57,7 @@ uv run --locked --directory notebooks marimo run figures/main/primitives/compone
 | Figure G.2   | `figures/appendix/xor_sweep_clusters.py`            | Representatives of the six solution clusters                    |
 | Figure G.3   | `figures/appendix/xor_solutions.py`                 | The six analytical XOR ReLU solutions                           |
 
-The appendix notebooks export PDFs directly to `figures/appendix/`, with fonts embedded to match the paper. The fonts and their licenses are documented in [notebooks/figures/fonts/README.md](notebooks/figures/fonts/README.md).
+The appendix notebooks export PDFs directly to `figures/appendix/`, with fonts embedded to match the paper. The fonts and their licenses are documented in [notebooks/figures/fonts/README.md](notebooks/figures/fonts/README.md). Each PDF is scaled on export to the width the figure occupies in the paper, given in the notebook's export cell as a fraction of the NeurIPS text width (see [notebooks/figures/layout.py](notebooks/figures/layout.py)).
 
 Figures 1 and 2 combine notebook-generated SVG components with layouts and LaTeX labels assembled manually in Inkscape. The editable sources are [dissociation.svg](figures/main/dissociation/dissociation.svg) and [primitives.svg](figures/main/primitives/primitives.svg); these contain the LaTeX commands for the labels. The finished figures, with labels rendered in the paper's fonts, are included as [dissociation.pdf](figures/main/dissociation/dissociation.pdf) and [primitives.pdf](figures/main/primitives/primitives.pdf). Rerunning the notebooks regenerates the components; rebuilding the final figures requires the manual assembly step.
 

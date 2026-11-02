@@ -15,6 +15,7 @@ with app.setup:
     from figures.appendix.xor_solutions import data_logit_magnitude
     from figures.fonts.config import FIGURE_FONT_CONFIG
     from figures.fonts.config import register_bundled_fonts
+    from figures.layout import scale_pdf_to_text_width
     from jaxtyping import Array
     from scipy.spatial.distance import squareform
 
@@ -319,8 +320,22 @@ def export_sweep_clusters(
     data_edge_lw: float,
     boundary_lw: float,
     normal_lw: float,
+    width_fraction: float,
 ) -> None:
-    """Export the figure with the paper's fonts."""
+    """Export the figure with the paper's fonts, at its width in the paper.
+
+    Args:
+        output_dir: Directory to write the PDF to.
+        output_stem: File name of the PDF, without extension.
+        fig_size: Figure size in inches, at which the figure is designed.
+        n_reps: Representatives to draw per cluster.
+        data_size: Marker area of the data points, in points squared.
+        data_edge_lw: Line width of the data markers' outline.
+        boundary_lw: Line width of the activation boundaries.
+        normal_lw: Line width of the boundary normal arrows.
+        width_fraction: Width of the figure in the paper, as a fraction
+          of the text width.
+    """
     output_dir.mkdir(parents=True, exist_ok=True)
     output_path = output_dir / f"{output_stem}.pdf"
     with plt.rc_context(FIGURE_FONT_CONFIG):
@@ -334,6 +349,7 @@ def export_sweep_clusters(
             output_path=output_path,
         )
     plt.close(fig)
+    scale_pdf_to_text_width(output_path, width_fraction)
 
 
 @app.cell
@@ -347,6 +363,7 @@ def _():
         data_edge_lw=0.5,
         boundary_lw=0.85,
         normal_lw=0.85,
+        width_fraction=0.8,  # \includegraphics[width=0.8\textwidth]
     )
     return
 

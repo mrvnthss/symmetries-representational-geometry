@@ -42,6 +42,7 @@ def _():
         x_to_y_ratio=1.4,
         n_points=1001,
         z_orders=(2, 1, 3),
+        width_fraction=0.95,  # \includegraphics[width=0.95\textwidth]
     )
     return
 

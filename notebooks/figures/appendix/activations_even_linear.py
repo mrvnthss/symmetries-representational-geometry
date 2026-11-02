@@ -17,6 +17,7 @@ with app.setup:
     from figures.appendix.common import draw_origin
     from figures.fonts.config import FIGURE_FONT_CONFIG
     from figures.fonts.config import register_bundled_fonts
+    from figures.layout import scale_pdf_to_text_width
     from jaxtyping import Array
 
     from symmetries import activations
@@ -182,8 +183,24 @@ def export_activation_components_grid(
     x_to_y_ratio: float,
     n_points: int,
     z_orders: tuple[int, int, int],
+    width_fraction: float,
 ) -> None:
-    """Export the figure with the paper's fonts."""
+    """Export the figure with the paper's fonts, at its width in the paper.
+
+    Args:
+        activation_specs: Activation functions to plot, one per panel.
+        output_dir: Directory to write the PDF to.
+        output_stem: File name of the PDF, without extension.
+        fig_size: Figure size in inches, at which the figure is designed.
+        n_rows: Number of rows of the panel grid.
+        n_cols: Number of columns of the panel grid.
+        y_range: Half-height of the shared y-axis limits.
+        x_to_y_ratio: Ratio of the x-axis to the y-axis half-range.
+        n_points: Number of points at which to evaluate the activations.
+        z_orders: Z-orders of the activation and its even and odd parts.
+        width_fraction: Width of the figure in the paper, as a fraction
+          of the text width.
+    """
     output_dir.mkdir(parents=True, exist_ok=True)
     output_path = output_dir / f"{output_stem}.pdf"
     with plt.rc_context(FIGURE_FONT_CONFIG):
@@ -200,6 +217,7 @@ def export_activation_components_grid(
             output_path=output_path,
         )
     plt.close(fig)
+    scale_pdf_to_text_width(output_path, width_fraction)
 
 
 @app.cell
@@ -215,6 +233,7 @@ def _():
         x_to_y_ratio=1.4,
         n_points=1001,
         z_orders=(3, 1, 2),
+        width_fraction=0.95,  # \includegraphics[width=0.95\textwidth]
     )
     return
 

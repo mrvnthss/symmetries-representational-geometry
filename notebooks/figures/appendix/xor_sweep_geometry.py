@@ -13,6 +13,7 @@ with app.setup:
     from experiments.sweeps import relu_sweep_models
     from figures.fonts.config import FIGURE_FONT_CONFIG
     from figures.fonts.config import register_bundled_fonts
+    from figures.layout import scale_pdf_to_text_width
     from matplotlib.transforms import ScaledTranslation
 
     from symmetries import clustering
@@ -231,8 +232,24 @@ def export_sweep_geometry(
     count_ticks: tuple[int, ...],
     angle_count_max: float,
     angle_count_ticks: tuple[int, ...],
+    width_fraction: float,
 ) -> None:
-    """Export the figure with the paper's fonts."""
+    """Export the figure with the paper's fonts, at its width in the paper.
+
+    Args:
+        output_dir: Directory to write the PDF to.
+        output_stem: File name of the PDF, without extension.
+        fig_size: Figure size in inches, at which the figure is designed.
+        distance_bin_width: Bin width of the distance panel.
+        distance_range: Axis limits of the distance panel.
+        n_angle_bins: Number of bins over one turn of the angle panel.
+        count_limits: Limits of the distance panel's count axis.
+        count_ticks: Ticks of the distance panel's count axis.
+        angle_count_max: Outer limit of the angle panel's count axis.
+        angle_count_ticks: Ticks of the angle panel's count axis.
+        width_fraction: Width of the figure in the paper, as a fraction
+          of the text width.
+    """
     output_dir.mkdir(parents=True, exist_ok=True)
     output_path = output_dir / f"{output_stem}.pdf"
     with plt.rc_context(FIGURE_FONT_CONFIG):
@@ -248,6 +265,7 @@ def export_sweep_geometry(
             output_path=output_path,
         )
     plt.close(fig)
+    scale_pdf_to_text_width(output_path, width_fraction)
 
 
 @app.cell
@@ -263,6 +281,7 @@ def _():
         count_ticks=(1, 10, 100, 1000),
         angle_count_max=180.0,
         angle_count_ticks=(50, 100, 150),
+        width_fraction=0.75,  # \includegraphics[width=0.75\textwidth]
     )
     return
 
