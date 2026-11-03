@@ -53,6 +53,7 @@ uv run --locked --directory notebooks marimo run figures/main/primitives/compone
 | Figure C.1   | `figures/appendix/activations_even_linear.py`       | Even-linear activation decompositions                           |
 | Figure C.2   | `figures/appendix/activations_constant_odd.py`      | Constant-odd activation decompositions                          |
 | Figure C.3   | `figures/appendix/activations_remaining.py`         | Remaining activation functions                                  |
+| Figure F.1   | `figures/appendix/nonunique_mwnp_geometry.py`       | Minimum-weight-norm geometries of the ReLU tent function        |
 | Figure G.1   | `figures/appendix/xor_sweep_geometry.py`            | Boundary geometry of the converged XOR networks                 |
 | Figure G.2   | `figures/appendix/xor_sweep_clusters.py`            | Representatives of the six solution clusters                    |
 | Figure G.3   | `figures/appendix/xor_solutions.py`                 | The six analytical XOR ReLU solutions                           |
