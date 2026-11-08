@@ -1,6 +1,6 @@
-# Parameter symmetries determine representational geometry in overparameterized nonlinear networks
+# Parameter Symmetries Determine Representational Geometry in Overparameterized Nonlinear Networks
 
-Code and figure sources accompanying our paper "[Parameter symmetries determine representational geometry in overparameterized nonlinear networks](https://arxiv.org/abs/2609.39078)" (NeurIPS 2026).
+Code and figure sources accompanying our paper "[Parameter Symmetries Determine Representational Geometry in Overparameterized Nonlinear Networks](https://arxiv.org/abs/2609.39078)" (NeurIPS 2026).
 
 <p align="center">
   <img src="figures/main/primitives/primitives-preview.png" width="860">
@@ -8,7 +8,7 @@ Code and figure sources accompanying our paper "[Parameter symmetries determine 
 
 ## Abstract
 
-Representations are routinely used across machine learning, psychology, and neuroscience to draw inferences about the computations of biological and artificial systems. Such inferences presume a meaningful link between representational geometry and the computation being performed. For artificial neural networks, however, the extent to which function constrains representation remains unclear. One key obstacle is that these networks admit parameter symmetries: changes in parameterization that preserve function exactly while reshaping representational geometry. Here, we show that a broad class of parameter symmetries acts on representations through just three primitive feature transformations: addition, duplication, and scaling. This feature-level characterization yields a closed-form decomposition of representational geometry into essential and auxiliary components, which makes precise how degeneracy in representational geometry can grow with overparameterization even when function is held fixed. Finally, we show that implementation-level selection rules can resolve this degeneracy, yielding identifiable geometries in which features are weighted according to their contributions to the network's function. Together, our results delineate when representations can support inferences about computation, and when they cannot.
+Representations are routinely used across machine learning, psychology, and neuroscience to draw inferences about the computations of biological and artificial systems. Such inferences presume that the geometry of these representations reflects the computation being performed. For artificial neural networks, however, the extent to which the function a network computes constrains this geometry remains unclear. One key obstacle is that these networks admit parameter symmetries: changes in parameterization that preserve function exactly while reshaping representational geometry. Here, we show that a broad class of parameter symmetries acts on representations through just three primitive feature transformations: addition, duplication, and scaling. This feature-level characterization yields a closed-form decomposition of representational geometry into essential and auxiliary components, revealing how representational degeneracy can exist without and grows with overparameterization even when function is held fixed. Finally, we establish conditions under which implementation-level selection rules resolve this degeneracy, yielding identifiable geometries in which features are weighted according to their contributions to the network's function. Together, our results delineate when representational geometry can support inferences about computation, and when it cannot.
 
 ## Installation
 

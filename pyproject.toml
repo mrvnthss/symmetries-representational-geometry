@@ -1,7 +1,7 @@
 [project]
 name = "symmetries-representational-geometry"
 version = "0.1.0"
-description = "Code accompanying the paper \"Parameter symmetries determine representational geometry in overparameterized nonlinear networks\" (NeurIPS 2026)."
+description = "Code accompanying the paper \"Parameter Symmetries Determine Representational Geometry in Overparameterized Nonlinear Networks\" (NeurIPS 2026)."
 readme = "README.md"
 license = "MIT"
 authors = [
