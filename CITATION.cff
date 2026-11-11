@@ -1,0 +1,39 @@
+cff-version: 1.2.0
+message: "If you use this code, please cite the accompanying paper."
+type: software
+title: 'Code for "Parameter symmetries determine representational geometry in overparameterized nonlinear networks"'
+authors:
+  - family-names: Theiss
+    given-names: Marvin
+    orcid: "https://orcid.org/0009-0002-0117-8532"
+    affiliation: University of Tübingen
+version: neurips-2026
+date-released: "2026-11-02"
+doi: 10.5281/zenodo.24133031
+repository-code: "https://github.com/mrvnthss/symmetries-representational-geometry"
+license: MIT
+preferred-citation:
+  type: conference-paper
+  title: "Parameter symmetries determine representational geometry in overparameterized nonlinear networks"
+  authors:
+    - family-names: Theiss
+      given-names: Marvin
+      orcid: "https://orcid.org/0009-0002-0117-8532"
+    - family-names: Braun
+      given-names: Lukas
+      orcid: "https://orcid.org/0000-0001-5899-1255"
+    - family-names: Saxe
+      given-names: Andrew M.
+      orcid: "https://orcid.org/0000-0002-9831-8812"
+    - family-names: Grant
+      given-names: Erin
+      orcid: "https://orcid.org/0009-0002-8623-7254"
+  collection-title: "Advances in Neural Information Processing Systems"
+  volume: 39
+  year: 2026
+  publisher:
+    name: "Curran Associates, Inc."
+  location:
+    name: "Paris, France"
+  status: in-press
+  url: "https://arxiv.org/abs/2609.39078"
