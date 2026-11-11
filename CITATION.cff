@@ -6,7 +6,7 @@ authors:
   - family-names: Theiss
     given-names: Marvin
     orcid: "https://orcid.org/0009-0002-0117-8532"
-    affiliation: University of Tübingen
+    affiliation: "University of Tübingen; IMPRS-IS"
 version: neurips-2026
 date-released: "2026-11-02"
 doi: 10.5281/zenodo.24133031
