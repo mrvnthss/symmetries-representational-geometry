@@ -1,5 +1,8 @@
 # Parameter Symmetries Determine Representational Geometry in Overparameterized Nonlinear Networks
 
+[![arXiv](https://img.shields.io/badge/arXiv-2609.39078-b31b1b?logo=arxiv&logoColor=white)](https://arxiv.org/abs/2609.39078)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24133031.svg)](https://doi.org/10.5281/zenodo.24133031)
+
 Code and figure sources accompanying our paper "[Parameter Symmetries Determine Representational Geometry in Overparameterized Nonlinear Networks](https://arxiv.org/abs/2609.39078)" (NeurIPS 2026).
 
 <p align="center">
